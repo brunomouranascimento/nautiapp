@@ -1,0 +1,245 @@
+/* Box sizing rules */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  font-family: 'Montserrat', sans-serif;
+  font-size: .9rem;
+  text-rendering: optimizeLegibility;
+}
+
+/* Remove default padding */
+ul[class],
+ol[class] {
+  padding: 0;
+}
+
+/* Remove default margin */
+body,
+h1,
+h2,
+h3,
+h4,
+p,
+ul[class],
+ol[class],
+li,
+figure,
+figcaption,
+blockquote,
+dl,
+dd {
+  margin: 0;
+}
+
+/* Set core body defaults */
+body {
+  min-height: 100vh;
+  scroll-behavior: smooth;
+  text-rendering: optimizeSpeed;
+  line-height: 1.5;
+  background-color: var(--background-color);
+  color: #FFFFFF;
+}
+
+/* Remove list styles on ul, ol elements with a class attribute */
+ul[class] {
+  list-style: none;
+}
+
+/* A elements that don't have a class get default styles */
+a:not([class]) {
+  text-decoration-skip-ink: auto;
+}
+
+/* Make images easier to work with */
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* Natural flow and rhythm in articles by default */
+article > * + * {
+  margin-top: 1em;
+}
+
+/* Inherit fonts for inputs and buttons */
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  border-radius: 32px !important;
+}
+
+/* Remove all animations and transitions for people that prefer not to see them */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.w-100 {
+  width: 100%;
+}
+
+a {
+  text-decoration: none;
+}
+
+.isClickable {
+  cursor: pointer;
+}
+
+.MuiDataGrid-root {
+  border: 0 !important;
+}
+
+
+.submit .MuiInputLabel-outlined  {
+  color: #FFFFFF !important;
+}
+
+.submit .MuiInputLabel-standard  {
+  color: #FFFFFF !important;
+}
+
+.MuiDataGrid-toolbarContainer button {
+  color: #fff;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.avatar-placeholder {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: solid 1px #FFFFFF;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  small {
+    margin-top: 9px;
+  }
+}
+
+.MuiTablePagination-root {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+#simple-tabpanel-0, #simple-tabpanel-1, #simple-tabpanel-2, #simple-tabpanel-3 {
+  // section {
+  //   div.MuiFormControl-root {
+  //     div.MuiInputBase-formControl {
+  //       padding: 15px;
+  //     }
+  //   }
+  // }
+
+  .MuiBox-root {
+    padding: 0
+  }
+}
+
+.bolder {
+  font-weight: bold;
+}
+
+.lighter {
+  font-weight: lighter;
+}
+
+#simple-tab-0, #simple-tab-1, #simple-tab-2, #simple-tab-3 {
+  padding-top: 0;
+  padding-bottom: 0;
+  height: 50px;
+}
+
+.MuiTabs-flexContainer {
+  height: 50px;
+}
+
+.MuiInputAdornment-positionEnd {
+
+  button {
+    margin-right: 0;
+  }
+}
+
+/* Customize website's scrollbar like Mac OS
+Not supports in Firefox and IE */
+.scrollbar {
+  overflow: overlay
+}
+
+/* total width */
+.scrollbar::-webkit-scrollbar {
+  background-color: rgba(0,0,0,0);
+  width: 16px;
+  height: 16px;
+  z-index: 999999;
+}
+
+/* background of the scrollbar except button or resizer */
+.scrollbar::-webkit-scrollbar-track {
+  background-color: rgba(0,0,0,0);
+}
+
+/* scrollbar itself */
+.scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(0,0,0,0);
+  border-radius:16px;
+  border:0px solid #fff;
+}
+
+/* set button(top and bottom of the scrollbar) */
+.scrollbar::-webkit-scrollbar-button {
+  display:none;
+}
+
+
+/* scrollbar when element is hovered */
+.scrollbar:hover::-webkit-scrollbar-thumb {
+  background-color: #a0a0a5;
+  border:4px solid #fff;
+}
+
+/* scrollbar when scrollbar is hovered */
+.scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color:#a0a0a5;
+    border:4px solid #f4f4f4
+}
+
+.MuiLinearProgress-root {
+  height: 2px !important;
+}
+
+.MuiBarElement-root {
+  width: 23px;
+}
+
+.loadingQueueMessage {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  height: 60vh;
+}
+
+.MuiChartsAxis-tickLabel, .MuiChartsLegend-label {
+  font-size: 12px !important;
+}
