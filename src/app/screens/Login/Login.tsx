@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#4E5F78',
     flex: 1,
     alignItems: 'center',
-    paddingTop: 30
+    paddingTop: 10
   },
   loginTitle: {
     fontSize: 28,

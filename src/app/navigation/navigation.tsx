@@ -18,6 +18,13 @@ import Trips from '../screens/Trips/Trips'
 import Financial from '../screens/Financial/Financial'
 import Support from '../screens/Support/Support'
 import OperatorAdministration from '../screens/OperatorAdministration/OperatorAdministration'
+import OperatorTrips from '../screens/OperatorAdministration/OperatorTrips'
+import VesselDetails from '../screens/OperatorAdministration/VesselDetails'
+import OperatorServices from '../screens/OperatorAdministration/OperatorServices'
+import OperatorSupport from '../screens/OperatorAdministration/OperatorSupport'
+import OperatorChat from '../screens/OperatorAdministration/OperatorChat'
+import VesselScan from '../screens/OperatorAdministration/VesselScan'
+import OperatorNotifications from '../screens/OperatorAdministration/OperatorNotifications'
 
 const Stack = createNativeStackNavigator()
 
@@ -34,6 +41,16 @@ export default function Routes() {
         <Stack.Screen
           name="OperatorAdministration"
           component={OperatorAdministration}
+        />
+        <Stack.Screen name="OperatorTrips" component={OperatorTrips} />
+        <Stack.Screen name="VesselDetails" component={VesselDetails} />
+        <Stack.Screen name="OperatorServices" component={OperatorServices} />
+        <Stack.Screen name="OperatorSupport" component={OperatorSupport} />
+        <Stack.Screen name="OperatorChat" component={OperatorChat} />
+        <Stack.Screen name="VesselScan" component={VesselScan} />
+        <Stack.Screen
+          name="OperatorNotifications"
+          component={OperatorNotifications}
         />
         <Stack.Screen name="Profile" component={Profile} />
         <Stack.Screen name="Employees" component={Employees} />
