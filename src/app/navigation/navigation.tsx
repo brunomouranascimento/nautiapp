@@ -25,6 +25,7 @@ import OperatorSupport from '../screens/OperatorAdministration/OperatorSupport'
 import OperatorChat from '../screens/OperatorAdministration/OperatorChat'
 import VesselScan from '../screens/OperatorAdministration/VesselScan'
 import OperatorNotifications from '../screens/OperatorAdministration/OperatorNotifications'
+import PaidAdministration from '../screens/PaidAdministration/PaidAdministration'
 
 const Stack = createNativeStackNavigator()
 
@@ -71,6 +72,7 @@ export default function Routes() {
         <Stack.Screen name="Trips" component={Trips} />
         <Stack.Screen name="Financial" component={Financial} />
         <Stack.Screen name="Support" component={Support} />
+        <Stack.Screen name="PaidUser" component={PaidAdministration} />
       </Stack.Navigator>
     </NavigationContainer>
   )

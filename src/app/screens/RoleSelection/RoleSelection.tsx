@@ -27,7 +27,7 @@ export default function RoleSelection() {
     },
     {
       name: 'USUÁRIO PAGO',
-      screen: 'PayUser'
+      screen: 'PaidUser'
     },
     {
       name: 'USUÁRIO FREE',
