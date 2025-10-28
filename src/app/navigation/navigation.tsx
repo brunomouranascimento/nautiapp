@@ -26,6 +26,12 @@ import OperatorChat from '../screens/OperatorAdministration/OperatorChat'
 import VesselScan from '../screens/OperatorAdministration/VesselScan'
 import OperatorNotifications from '../screens/OperatorAdministration/OperatorNotifications'
 import PaidAdministration from '../screens/PaidAdministration/PaidAdministration'
+import PaidVessels from '../screens/PaidAdministration/PaidVessels'
+import PaidVessel from '../screens/PaidAdministration/PaidVessel'
+import PaidRevision from '../screens/PaidAdministration/PaidRevision'
+import PaidRevisions from '../screens/PaidAdministration/PaidRevisions'
+import PaidTracker from '../screens/PaidAdministration/PaidTracker'
+import PaidTrackerAccess from '../screens/PaidAdministration/PaidTrackerAccess'
 
 const Stack = createNativeStackNavigator()
 
@@ -73,6 +79,12 @@ export default function Routes() {
         <Stack.Screen name="Financial" component={Financial} />
         <Stack.Screen name="Support" component={Support} />
         <Stack.Screen name="PaidUser" component={PaidAdministration} />
+        <Stack.Screen name="PaidVessels" component={PaidVessels} />
+        <Stack.Screen name="PaidVessel" component={PaidVessel} />
+        <Stack.Screen name="PaidRevisions" component={PaidRevisions} />
+        <Stack.Screen name="PaidRevision" component={PaidRevision} />
+        <Stack.Screen name="PaidTracker" component={PaidTracker} />
+        <Stack.Screen name="PaidTrackerAccess" component={PaidTrackerAccess} />
       </Stack.Navigator>
     </NavigationContainer>
   )

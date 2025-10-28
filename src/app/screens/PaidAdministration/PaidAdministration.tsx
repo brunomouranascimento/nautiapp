@@ -70,7 +70,7 @@ export default function PaidAdministration() {
         <View style={styles.grid}>
           <TouchableOpacity
             style={styles.button}
-            onPress={() => handleNavigate('Profile')}
+            onPress={() => handleNavigate('PaidVessels')}
           >
             <Ionicons
               name="boat"
