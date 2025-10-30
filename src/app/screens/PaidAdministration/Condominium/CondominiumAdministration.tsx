@@ -11,13 +11,14 @@ import {
   AntDesign,
   Feather,
   FontAwesome5,
+  FontAwesome6,
   Ionicons,
   MaterialCommunityIcons,
   MaterialIcons
 } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
 
-export default function PaidAdministration() {
+export default function CondominiumAdministration() {
   const navigation: any = useNavigation()
 
   const goToRoleSelection = () => {
@@ -32,7 +33,7 @@ export default function PaidAdministration() {
     <ScrollView style={styles.container}>
       <View style={styles.container}>
         <Image
-          source={require('../../assets/logoname_high_resolution.png')}
+          source={require('../../../assets/logoname_high_resolution.png')}
           style={styles.logo}
           resizeMode="contain"
         />
@@ -40,30 +41,28 @@ export default function PaidAdministration() {
         <View style={styles.card}>
           <View style={styles.cardHeader}>
             <Image
-              source={require('../../assets/splash-icon.png')}
+              source={require('../../../assets/splash-icon.png')}
               style={styles.marinaImage}
             />
             <View>
-              <Text style={styles.marinaName}>Jorge Fernandes</Text>
-              <Text style={styles.marinaCnpj}>Mat. 123456789</Text>
+              <Text style={styles.marinaName}>Condomínio XPTO</Text>
+              <Text style={styles.marinaCnpj}>Fulano's House</Text>
             </View>
             <TouchableOpacity
               style={styles.editIcon}
-              onPress={() => handleNavigate('EditClient')}
+              onPress={() => handleNavigate('CondominiumData')}
             >
               <Feather name="edit-2" size={16} color="#fff" />
             </TouchableOpacity>
           </View>
 
           <View style={styles.cardRow}>
-            <Feather name="user" color="#fff" size={16} />
-            <Text style={styles.label}>CPF</Text>
-            <Text style={styles.value}>123.456.789-10</Text>
+            <Text style={styles.label}>Rua XYZ, 123</Text>
+            <Text style={styles.value}>Porto Alegre, RS</Text>
           </View>
           <View style={styles.cardRow}>
-            <Feather name="calendar" color="#fff" size={16} />
-            <Text style={styles.label}>Nascimento</Text>
-            <Text style={styles.value}>01/02/1985</Text>
+            <Text style={styles.label}>(51) 1234-5678</Text>
+            <Text style={styles.value}>email12345@gmail.com</Text>
           </View>
         </View>
 
@@ -72,79 +71,67 @@ export default function PaidAdministration() {
             style={styles.button}
             onPress={() => handleNavigate('PaidVessels')}
           >
-            <Ionicons
-              name="boat"
+            <FontAwesome5
+              name="address-card"
               size={28}
               color="#fff"
               style={{ marginBottom: 8 }}
             />
-            <Text style={styles.buttonText}>Embarcações</Text>
+            <Text style={styles.buttonText}>Controle de acesso</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.button}
-            onPress={() => handleNavigate('CondominiumAdministration')}
+            onPress={() => handleNavigate('Employees')}
           >
-            <FontAwesome5
-              name="laptop-house"
+            <FontAwesome6
+              name="screwdriver-wrench"
               size={28}
               color="#fff"
               style={{ marginBottom: 8 }}
             />
-            <Text style={styles.buttonText}>Condomínio</Text>
+            <Text style={styles.buttonText}>Manutenção</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.button}
             onPress={() => handleNavigate('Clients')}
           >
-            <FontAwesome5
-              name="cloud-sun"
+            <FontAwesome6
+              name="box-archive"
               size={28}
               color="#fff"
               style={{ marginBottom: 8 }}
             />
-            <Text style={styles.buttonText}>Clima</Text>
+            <Text style={styles.buttonText}>Achados e perdidos</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.button}
             onPress={() => handleNavigate('Trips')}
           >
-            <MaterialCommunityIcons
-              name="anchor"
+            <FontAwesome6
+              name="building-user"
               size={28}
               color="#fff"
               style={{ marginBottom: 8 }}
             />
-            <Text style={styles.buttonText}>Marina</Text>
+            <Text style={styles.buttonText}>Administração</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.button}
             onPress={() => handleNavigate('Financial')}
           >
-            <FontAwesome5
-              name="location-arrow"
+            <MaterialIcons
+              name="pets"
               size={28}
               color="#fff"
               style={{ marginBottom: 8 }}
             />
-            <Text style={styles.buttonText}>Agendar navegação</Text>
+            <Text style={styles.buttonText}>Pets</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => handleNavigate('Support')}
-          >
-            <MaterialIcons
-              name="loyalty"
-              size={28}
-              color="#fff"
-              style={{ marginBottom: 8 }}
-            />
-            <Text style={styles.buttonText}>Cupons e descontos</Text>
-          </TouchableOpacity>
           <TouchableOpacity
             style={styles.button}
             onPress={() => handleNavigate('Support')}
@@ -155,67 +142,10 @@ export default function PaidAdministration() {
               color="#fff"
               style={{ marginBottom: 8 }}
             />
-            <Text style={styles.buttonText}>Financeiro</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => handleNavigate('Support')}
-          >
-            <MaterialCommunityIcons
-              name="map-marker-check"
-              size={28}
-              color="#fff"
-              style={{ marginBottom: 8 }}
-            />
-            <Text style={styles.buttonText}>Check-in</Text>
+            <Text style={styles.buttonText}>Prestação de contas</Text>
           </TouchableOpacity>
         </View>
-        <Text
-          style={{
-            color: '#fff',
-            fontSize: 18,
-            fontWeight: 'bold',
-            marginTop: 5,
-            marginBottom: 10,
-            textAlign: 'center'
-          }}
-        >
-          Movimentação
-        </Text>
-        <View style={styles.grid}>
-          <TouchableOpacity
-            style={styles.buttonMovement}
-            onPress={() => handleNavigate('Support')}
-          >
-            <AntDesign
-              name="arrowdown"
-              size={38}
-              color="red"
-              style={{ marginBottom: 8 }}
-            />
-            <Text style={styles.buttonText}>Solicitar descida</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.buttonMovement}
-            onPress={() => handleNavigate('Support')}
-          >
-            <AntDesign
-              name="arrowup"
-              size={38}
-              color="green"
-              style={{ marginBottom: 8 }}
-            />
-            <Text style={styles.buttonText}>Solicitar subida</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={{ alignItems: 'center' }}>
-          <TouchableOpacity
-            onPress={goToRoleSelection}
-            style={styles.emergencyButton}
-          >
-            <Text style={styles.emergencyText}>SOS & RESGATE</Text>
-          </TouchableOpacity>
-        </View>
+
         <View style={{ alignItems: 'center' }}>
           <TouchableOpacity onPress={goToRoleSelection} style={styles.goBack}>
             <Text style={styles.goBackText}>VOLTAR</Text>

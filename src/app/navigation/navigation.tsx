@@ -32,6 +32,8 @@ import PaidRevision from '../screens/PaidAdministration/PaidRevision'
 import PaidRevisions from '../screens/PaidAdministration/PaidRevisions'
 import PaidTracker from '../screens/PaidAdministration/PaidTracker'
 import PaidTrackerAccess from '../screens/PaidAdministration/PaidTrackerAccess'
+import CondominiumAdministration from '../screens/PaidAdministration/Condominium/CondominiumAdministration'
+import CondominiumDataScreen from '../screens/PaidAdministration/Condominium/CondominiumData'
 
 const Stack = createNativeStackNavigator()
 
@@ -85,6 +87,14 @@ export default function Routes() {
         <Stack.Screen name="PaidRevision" component={PaidRevision} />
         <Stack.Screen name="PaidTracker" component={PaidTracker} />
         <Stack.Screen name="PaidTrackerAccess" component={PaidTrackerAccess} />
+        <Stack.Screen
+          name="CondominiumAdministration"
+          component={CondominiumAdministration}
+        />
+        <Stack.Screen
+          name="CondominiumData"
+          component={CondominiumDataScreen}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   )
