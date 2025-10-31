@@ -34,6 +34,16 @@ import PaidTracker from '../screens/PaidAdministration/PaidTracker'
 import PaidTrackerAccess from '../screens/PaidAdministration/PaidTrackerAccess'
 import CondominiumAdministration from '../screens/PaidAdministration/Condominium/CondominiumAdministration'
 import CondominiumDataScreen from '../screens/PaidAdministration/Condominium/CondominiumData'
+import AccessControlScreen from '../screens/PaidAdministration/Condominium/AccessControl'
+import AccessForm from '../screens/PaidAdministration/Condominium/AcessForm'
+import MaintenanceForm from '../screens/PaidAdministration/Condominium/MaintenanceForm'
+import MaintenanceScreen from '../screens/PaidAdministration/Condominium/Maintenance'
+import LostAndFoundForm from '../screens/PaidAdministration/Condominium/LostAndFoundForm'
+import AdministrationScreen from '../screens/PaidAdministration/Condominium/Administration'
+import PetsListScreen from '../screens/PaidAdministration/Condominium/PetsList'
+import PetFormScreen from '../screens/PaidAdministration/Condominium/PetsForm'
+import ReportLostPetScreen from '../screens/PaidAdministration/Condominium/ReportLotsPet'
+import AccountStatementsScreen from '../screens/PaidAdministration/Condominium/AccountStatements'
 
 const Stack = createNativeStackNavigator()
 
@@ -94,6 +104,19 @@ export default function Routes() {
         <Stack.Screen
           name="CondominiumData"
           component={CondominiumDataScreen}
+        />
+        <Stack.Screen name="AccessControl" component={AccessControlScreen} />
+        <Stack.Screen name="AccessForm" component={AccessForm} />
+        <Stack.Screen name="Maintenance" component={MaintenanceScreen} />
+        <Stack.Screen name="MaintenanceForm" component={MaintenanceForm} />
+        <Stack.Screen name="LostAndFoundForm" component={LostAndFoundForm} />
+        <Stack.Screen name="Administration" component={AdministrationScreen} />
+        <Stack.Screen name="PetsList" component={PetsListScreen} />
+        <Stack.Screen name="PetsForm" component={PetFormScreen} />
+        <Stack.Screen name="ReportLostPet" component={ReportLostPetScreen} />
+        <Stack.Screen
+          name="AccountStatements"
+          component={AccountStatementsScreen}
         />
       </Stack.Navigator>
     </NavigationContainer>

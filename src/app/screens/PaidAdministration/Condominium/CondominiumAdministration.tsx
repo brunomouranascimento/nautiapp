@@ -69,7 +69,7 @@ export default function CondominiumAdministration() {
         <View style={styles.grid}>
           <TouchableOpacity
             style={styles.button}
-            onPress={() => handleNavigate('PaidVessels')}
+            onPress={() => handleNavigate('AccessControl')}
           >
             <FontAwesome5
               name="address-card"
@@ -82,7 +82,7 @@ export default function CondominiumAdministration() {
 
           <TouchableOpacity
             style={styles.button}
-            onPress={() => handleNavigate('Employees')}
+            onPress={() => handleNavigate('Maintenance')}
           >
             <FontAwesome6
               name="screwdriver-wrench"
@@ -95,7 +95,7 @@ export default function CondominiumAdministration() {
 
           <TouchableOpacity
             style={styles.button}
-            onPress={() => handleNavigate('Clients')}
+            onPress={() => handleNavigate('LostAndFoundForm')}
           >
             <FontAwesome6
               name="box-archive"
@@ -108,7 +108,7 @@ export default function CondominiumAdministration() {
 
           <TouchableOpacity
             style={styles.button}
-            onPress={() => handleNavigate('Trips')}
+            onPress={() => handleNavigate('Administration')}
           >
             <FontAwesome6
               name="building-user"
@@ -121,7 +121,7 @@ export default function CondominiumAdministration() {
 
           <TouchableOpacity
             style={styles.button}
-            onPress={() => handleNavigate('Financial')}
+            onPress={() => handleNavigate('PetsList')}
           >
             <MaterialIcons
               name="pets"
@@ -134,7 +134,7 @@ export default function CondominiumAdministration() {
 
           <TouchableOpacity
             style={styles.button}
-            onPress={() => handleNavigate('Support')}
+            onPress={() => handleNavigate('AccountStatements')}
           >
             <FontAwesome5
               name="chart-line"
