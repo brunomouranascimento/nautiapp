@@ -96,7 +96,7 @@ export default function PaidAdministration() {
 
           <TouchableOpacity
             style={styles.button}
-            onPress={() => handleNavigate('Clients')}
+            onPress={() => handleNavigate('Weather')}
           >
             <FontAwesome5
               name="cloud-sun"
@@ -109,7 +109,7 @@ export default function PaidAdministration() {
 
           <TouchableOpacity
             style={styles.button}
-            onPress={() => handleNavigate('Trips')}
+            onPress={() => handleNavigate('PaidMarinaAdministration')}
           >
             <MaterialCommunityIcons
               name="anchor"

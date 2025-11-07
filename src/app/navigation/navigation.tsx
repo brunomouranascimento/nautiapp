@@ -26,12 +26,12 @@ import OperatorChat from '../screens/OperatorAdministration/OperatorChat'
 import VesselScan from '../screens/OperatorAdministration/VesselScan'
 import OperatorNotifications from '../screens/OperatorAdministration/OperatorNotifications'
 import PaidAdministration from '../screens/PaidAdministration/PaidAdministration'
-import PaidVessels from '../screens/PaidAdministration/PaidVessels'
-import PaidVessel from '../screens/PaidAdministration/PaidVessel'
-import PaidRevision from '../screens/PaidAdministration/PaidRevision'
-import PaidRevisions from '../screens/PaidAdministration/PaidRevisions'
-import PaidTracker from '../screens/PaidAdministration/PaidTracker'
-import PaidTrackerAccess from '../screens/PaidAdministration/PaidTrackerAccess'
+import PaidVessels from '../screens/PaidAdministration/Vessels/PaidVessels'
+import PaidVessel from '../screens/PaidAdministration/Vessels/PaidVessel'
+import PaidRevision from '../screens/PaidAdministration/Vessels/PaidRevision'
+import PaidRevisions from '../screens/PaidAdministration/Vessels/PaidRevisions'
+import PaidTracker from '../screens/PaidAdministration/Vessels/PaidTracker'
+import PaidTrackerAccess from '../screens/PaidAdministration/Vessels/PaidTrackerAccess'
 import CondominiumAdministration from '../screens/PaidAdministration/Condominium/CondominiumAdministration'
 import CondominiumDataScreen from '../screens/PaidAdministration/Condominium/CondominiumData'
 import AccessControlScreen from '../screens/PaidAdministration/Condominium/AccessControl'
@@ -44,6 +44,11 @@ import PetsListScreen from '../screens/PaidAdministration/Condominium/PetsList'
 import PetFormScreen from '../screens/PaidAdministration/Condominium/PetsForm'
 import ReportLostPetScreen from '../screens/PaidAdministration/Condominium/ReportLotsPet'
 import AccountStatementsScreen from '../screens/PaidAdministration/Condominium/AccountStatements'
+import WeatherScreen from '../screens/PaidAdministration/Weather/Weather'
+import PaidMarinaAdministrationScreen from '../screens/PaidAdministration/Marina/PaidMarinaAdministration'
+import MyMarinaScreen from '../screens/PaidAdministration/Marina/MyMarina'
+import NavigateToMarinaScreen from '../screens/PaidAdministration/Marina/NavigateToMarina'
+import MarinaServicesScreen from '../screens/PaidAdministration/Marina/MarinaServices'
 
 const Stack = createNativeStackNavigator()
 
@@ -118,6 +123,17 @@ export default function Routes() {
           name="AccountStatements"
           component={AccountStatementsScreen}
         />
+        <Stack.Screen name="Weather" component={WeatherScreen} />
+        <Stack.Screen
+          name="PaidMarinaAdministration"
+          component={PaidMarinaAdministrationScreen}
+        />
+        <Stack.Screen name="MyMarina" component={MyMarinaScreen} />
+        <Stack.Screen
+          name="NavigateToMarina"
+          component={NavigateToMarinaScreen}
+        />
+        <Stack.Screen name="MarinaServices" component={MarinaServicesScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   )
