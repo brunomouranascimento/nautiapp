@@ -49,6 +49,8 @@ import PaidMarinaAdministrationScreen from '../screens/PaidAdministration/Marina
 import MyMarinaScreen from '../screens/PaidAdministration/Marina/MyMarina'
 import NavigateToMarinaScreen from '../screens/PaidAdministration/Marina/NavigateToMarina'
 import MarinaServicesScreen from '../screens/PaidAdministration/Marina/MarinaServices'
+import FuelScreen from '../screens/PaidAdministration/Marina/Services/Fuel/Fuel'
+import FuelDetailsScreen from '../screens/PaidAdministration/Marina/Services/Fuel/FuelDetails'
 
 const Stack = createNativeStackNavigator()
 
@@ -134,6 +136,8 @@ export default function Routes() {
           component={NavigateToMarinaScreen}
         />
         <Stack.Screen name="MarinaServices" component={MarinaServicesScreen} />
+        <Stack.Screen name="Fuel" component={FuelScreen} />
+        <Stack.Screen name="FuelDetails" component={FuelDetailsScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   )

@@ -23,7 +23,7 @@ export default function MarinaServicesScreen() {
   const goBack = () => navigation.goBack()
   const closeAll = () => navigation.popToTop()
 
-  const goAbastecimento = () => navigation.navigate('ServicosAbastecimento')
+  const goAbastecimento = () => navigation.navigate('Fuel')
   const goBistro = () => navigation.navigate('ServicosBistro')
   const goFestas = () => navigation.navigate('ServicosFestasEventos')
 
