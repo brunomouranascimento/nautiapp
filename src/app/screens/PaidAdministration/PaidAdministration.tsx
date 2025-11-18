@@ -1,11 +1,13 @@
-import React from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   Image,
-  ScrollView
+  ScrollView,
+  Modal,
+  ActivityIndicator
 } from 'react-native'
 import {
   AntDesign,
@@ -17,16 +19,114 @@ import {
 } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
 
+type MovementType = 'SUBIDA' | 'DESCIDA'
+type MovementStep = 1 | 2 | 3 | 4
+
 export default function PaidAdministration() {
   const navigation: any = useNavigation()
 
+  const [movementModalVisible, setMovementModalVisible] = useState(false)
+  const [movementType, setMovementType] = useState<MovementType | null>(null)
+  const [movementStep, setMovementStep] = useState<MovementStep>(1)
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null)
+
   const goToRoleSelection = () => {
     navigation.goBack()
+  }
+  const goToSosHelp = () => {
+    navigation.navigate('SosHelp')
   }
 
   const handleNavigate = (menu: string) => {
     navigation.navigate(menu)
   }
+
+  const clearFlowTimeout = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current)
+      timeoutRef.current = null
+    }
+  }
+
+  const advanceStep = (step: MovementStep) => {
+    setMovementStep(step)
+
+    if (step < 4) {
+      clearFlowTimeout()
+      timeoutRef.current = setTimeout(() => {
+        advanceStep((step + 1) as MovementStep)
+      }, 2500)
+    }
+  }
+
+  const startMovementFlow = (type: MovementType) => {
+    clearFlowTimeout()
+    setMovementType(type)
+    setMovementModalVisible(true)
+    advanceStep(1)
+  }
+
+  const closeMovementFlow = () => {
+    clearFlowTimeout()
+    setMovementModalVisible(false)
+    setMovementStep(1)
+    setMovementType(null)
+  }
+
+  useEffect(() => {
+    return () => {
+      clearFlowTimeout()
+    }
+  }, [])
+
+  const getModalTexts = () => {
+    if (!movementType) {
+      return {
+        title: '',
+        subtitle: ''
+      }
+    }
+
+    if (movementStep === 1) {
+      return {
+        title: 'Aguarde confirmação do operador ...',
+        subtitle: ''
+      }
+    }
+
+    if (movementStep === 2) {
+      return {
+        title: 'Confirmado!',
+        subtitle:
+          movementType === 'SUBIDA'
+            ? 'O operador confirmou seu movimento de subida, aguarde sua vez.\n\nTempo médio de espera: 20 minutos'
+            : 'O operador confirmou seu movimento de descida, aguarde sua vez.\n\nTempo médio de espera: 20 minutos'
+      }
+    }
+
+    if (movementStep === 3) {
+      return {
+        title: 'Você é o próximo da fila!',
+        subtitle: 'Dirija-se à rampa imediatamente.'
+      }
+    }
+
+    // step 4 – textos finais diferentes
+    if (movementType === 'SUBIDA') {
+      return {
+        title: 'Retirada finalizada com sucesso!',
+        subtitle:
+          'Sua embarcação foi guardada na posição XXX.\nObrigada e até a próxima!'
+      }
+    } else {
+      return {
+        title: 'Descida finalizada com sucesso!',
+        subtitle: 'Sua embarcação está posicionada na rampa.\nBoa navegação!'
+      }
+    }
+  }
+
+  const { title: modalTitle, subtitle: modalSubtitle } = getModalTexts()
 
   return (
     <ScrollView style={styles.container}>
@@ -122,7 +222,7 @@ export default function PaidAdministration() {
 
           <TouchableOpacity
             style={styles.button}
-            onPress={() => handleNavigate('Financial')}
+            onPress={() => handleNavigate('NavigationScheduling')}
           >
             <FontAwesome5
               name="location-arrow"
@@ -135,7 +235,7 @@ export default function PaidAdministration() {
 
           <TouchableOpacity
             style={styles.button}
-            onPress={() => handleNavigate('Support')}
+            onPress={() => handleNavigate('Coupons')}
           >
             <MaterialIcons
               name="loyalty"
@@ -145,9 +245,10 @@ export default function PaidAdministration() {
             />
             <Text style={styles.buttonText}>Cupons e descontos</Text>
           </TouchableOpacity>
+
           <TouchableOpacity
             style={styles.button}
-            onPress={() => handleNavigate('Support')}
+            onPress={() => handleNavigate('PaidFinancial')}
           >
             <FontAwesome5
               name="chart-line"
@@ -157,9 +258,10 @@ export default function PaidAdministration() {
             />
             <Text style={styles.buttonText}>Financeiro</Text>
           </TouchableOpacity>
+
           <TouchableOpacity
             style={styles.button}
-            onPress={() => handleNavigate('Support')}
+            onPress={() => handleNavigate('CheckIn')}
           >
             <MaterialCommunityIcons
               name="map-marker-check"
@@ -170,6 +272,7 @@ export default function PaidAdministration() {
             <Text style={styles.buttonText}>Check-in</Text>
           </TouchableOpacity>
         </View>
+
         <Text
           style={{
             color: '#fff',
@@ -182,10 +285,11 @@ export default function PaidAdministration() {
         >
           Movimentação
         </Text>
+
         <View style={styles.grid}>
           <TouchableOpacity
             style={styles.buttonMovement}
-            onPress={() => handleNavigate('Support')}
+            onPress={() => startMovementFlow('DESCIDA')}
           >
             <AntDesign
               name="arrowdown"
@@ -195,9 +299,10 @@ export default function PaidAdministration() {
             />
             <Text style={styles.buttonText}>Solicitar descida</Text>
           </TouchableOpacity>
+
           <TouchableOpacity
             style={styles.buttonMovement}
-            onPress={() => handleNavigate('Support')}
+            onPress={() => startMovementFlow('SUBIDA')}
           >
             <AntDesign
               name="arrowup"
@@ -208,35 +313,65 @@ export default function PaidAdministration() {
             <Text style={styles.buttonText}>Solicitar subida</Text>
           </TouchableOpacity>
         </View>
+
         <View style={{ alignItems: 'center' }}>
           <TouchableOpacity
-            onPress={goToRoleSelection}
+            onPress={goToSosHelp}
             style={styles.emergencyButton}
           >
             <Text style={styles.emergencyText}>SOS & RESGATE</Text>
           </TouchableOpacity>
         </View>
+
         <View style={{ alignItems: 'center' }}>
           <TouchableOpacity onPress={goToRoleSelection} style={styles.goBack}>
             <Text style={styles.goBackText}>VOLTAR</Text>
           </TouchableOpacity>
         </View>
       </View>
+
+      {/* MODAL FLUXO DE MOVIMENTAÇÃO */}
+      <Modal
+        visible={movementModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={closeMovementFlow}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>{modalTitle}</Text>
+
+              <TouchableOpacity onPress={closeMovementFlow}>
+                <Ionicons name="close" size={22} color="#FFFFFF" />
+              </TouchableOpacity>
+            </View>
+
+            {!!modalSubtitle && (
+              <Text style={styles.modalMessage}>{modalSubtitle}</Text>
+            )}
+
+            {/* Loader */}
+            {modalTitle !== 'Descida finalizada com sucesso!' &&
+              modalTitle !== 'Retirada finalizada com sucesso!' && (
+                <View style={styles.loaderContainer}>
+                  <ActivityIndicator size="large" color="#FFFFFF" />
+                  <Text style={styles.loaderText}>Aguarde</Text>
+                </View>
+              )}
+
+            {movementStep === 4 && (
+              <TouchableOpacity
+                style={styles.modalFinalButton}
+                onPress={closeMovementFlow}
+              >
+                <Text style={styles.modalFinalButtonText}>FINALIZAR</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
-  )
-}
-
-const MenuButton = ({ icon, label, customIconSet }: any) => {
-  const Icon =
-    customIconSet === 'MaterialCommunityIcons'
-      ? MaterialCommunityIcons
-      : FontAwesome5
-
-  return (
-    <TouchableOpacity style={styles.button}>
-      <Icon name={icon} size={24} color="#fff" style={{ marginBottom: 8 }} />
-      <Text style={styles.buttonText}>{label}</Text>
-    </TouchableOpacity>
   )
 }
 
@@ -333,6 +468,64 @@ const styles = StyleSheet.create({
     width: '47%',
     marginBottom: 16
   },
-  buttonText: { color: '#fff', fontWeight: '600', textAlign: 'center' }
+  buttonText: { color: '#fff', fontWeight: '600', textAlign: 'center' },
+
+  // Modal fluxo
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.75)',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  modalContainer: {
+    width: '82%',
+    backgroundColor: '#2F3A4C',
+    borderRadius: 20,
+    paddingHorizontal: 24,
+    paddingVertical: 26
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 16
+  },
+  modalTitle: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: '700',
+    textAlign: 'left',
+    flex: 1,
+    marginRight: 12
+  },
+  modalMessage: {
+    color: '#E1E6FF',
+    fontSize: 14,
+    lineHeight: 20,
+    textAlign: 'center',
+    marginBottom: 24
+  },
+  loaderContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 20
+  },
+  loaderText: {
+    color: '#FFFFFF',
+    marginTop: 8,
+    fontSize: 13
+  },
+  modalFinalButton: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 24,
+    paddingVertical: 12,
+    alignItems: 'center',
+    marginTop: 4
+  },
+  modalFinalButtonText: {
+    color: '#2F3A4C',
+    fontSize: 14,
+    fontWeight: '700'
+  }
 })
 

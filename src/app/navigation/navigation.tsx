@@ -61,6 +61,18 @@ import PartyAndEventsScreen from '../screens/PaidAdministration/Marina/Services/
 import CalendarScreen from '../screens/PaidAdministration/Marina/Services/PartyAndEvents/Calendar'
 import BudgetsScreen from '../screens/PaidAdministration/Marina/Services/PartyAndEvents/Budget'
 import StructureScreen from '../screens/PaidAdministration/Marina/Services/PartyAndEvents/Structure'
+import NavigationSchedulingScreen from '../screens/PaidAdministration/NavigationSchedule/NavigationScheduleScreen'
+import NavigationPlanScreen from '../screens/PaidAdministration/NavigationSchedule/Schedule'
+import CouponsScreen from '../screens/PaidAdministration/Coupons/Coupons'
+import PaidFinancialScreen from '../screens/PaidAdministration/Financial/PaidFinancial'
+import MonthlyScreen from '../screens/PaidAdministration/Financial/Monthly'
+import PaidFuelScreen from '../screens/PaidAdministration/Financial/PaidFuel'
+import CheckInScreen from '../screens/PaidAdministration/Checkin/Checkin'
+import SosHelpScreen from '../screens/PaidAdministration/SOSHelp/SOSHelp'
+import SosAuthoritiesScreen from '../screens/PaidAdministration/SOSHelp/Authorities'
+import SosMarinaChatScreen from '../screens/PaidAdministration/SOSHelp/Marina'
+import SosShareLocationScreen from '../screens/PaidAdministration/SOSHelp/ShareLocation'
+import SosIncidentScreen from '../screens/PaidAdministration/SOSHelp/Incident'
 
 const Stack = createNativeStackNavigator()
 
@@ -158,6 +170,24 @@ export default function Routes() {
         <Stack.Screen name="Calendar" component={CalendarScreen} />
         <Stack.Screen name="Budgets" component={BudgetsScreen} />
         <Stack.Screen name="Structure" component={StructureScreen} />
+        <Stack.Screen
+          name="NavigationScheduling"
+          component={NavigationSchedulingScreen}
+        />
+        <Stack.Screen name="Schedule" component={NavigationPlanScreen} />
+        <Stack.Screen name="Coupons" component={CouponsScreen} />
+        <Stack.Screen name="PaidFinancial" component={PaidFinancialScreen} />
+        <Stack.Screen name="Monthly" component={MonthlyScreen} />
+        <Stack.Screen name="PaidFuel" component={PaidFuelScreen} />
+        <Stack.Screen name="CheckIn" component={CheckInScreen} />
+        <Stack.Screen name="SosHelp" component={SosHelpScreen} />
+        <Stack.Screen name="SosAuthorities" component={SosAuthoritiesScreen} />
+        <Stack.Screen name="SosMarina" component={SosMarinaChatScreen} />
+        <Stack.Screen
+          name="SosShareLocation"
+          component={SosShareLocationScreen}
+        />
+        <Stack.Screen name="SosIncident" component={SosIncidentScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   )
