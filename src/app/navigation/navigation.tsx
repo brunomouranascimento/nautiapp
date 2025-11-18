@@ -51,6 +51,16 @@ import NavigateToMarinaScreen from '../screens/PaidAdministration/Marina/Navigat
 import MarinaServicesScreen from '../screens/PaidAdministration/Marina/MarinaServices'
 import FuelScreen from '../screens/PaidAdministration/Marina/Services/Fuel/Fuel'
 import FuelDetailsScreen from '../screens/PaidAdministration/Marina/Services/Fuel/FuelDetails'
+import BistroHomeScreen from '../screens/PaidAdministration/Marina/Services/Bistro/Bistro'
+import OrderByTableScreen from '../screens/PaidAdministration/Marina/Services/Bistro/OrderByTable'
+import OrderByVesselScreen from '../screens/PaidAdministration/Marina/Services/Bistro/OrderByVessel'
+import ScheduleOrderScreen from '../screens/PaidAdministration/Marina/Services/Bistro/ScheduleOrder'
+import SelectProductsScreen from '../screens/PaidAdministration/Marina/Services/Bistro/SelectProducts'
+import OrderSummaryScreen from '../screens/PaidAdministration/Marina/Services/Bistro/OrderSummary'
+import PartyAndEventsScreen from '../screens/PaidAdministration/Marina/Services/PartyAndEvents/PartyAndEvents'
+import CalendarScreen from '../screens/PaidAdministration/Marina/Services/PartyAndEvents/Calendar'
+import BudgetsScreen from '../screens/PaidAdministration/Marina/Services/PartyAndEvents/Budget'
+import StructureScreen from '../screens/PaidAdministration/Marina/Services/PartyAndEvents/Structure'
 
 const Stack = createNativeStackNavigator()
 
@@ -138,6 +148,16 @@ export default function Routes() {
         <Stack.Screen name="MarinaServices" component={MarinaServicesScreen} />
         <Stack.Screen name="Fuel" component={FuelScreen} />
         <Stack.Screen name="FuelDetails" component={FuelDetailsScreen} />
+        <Stack.Screen name="Bistro" component={BistroHomeScreen} />
+        <Stack.Screen name="OrderByTable" component={OrderByTableScreen} />
+        <Stack.Screen name="OrderByVessel" component={OrderByVesselScreen} />
+        <Stack.Screen name="ScheduleOrder" component={ScheduleOrderScreen} />
+        <Stack.Screen name="SelectProducts" component={SelectProductsScreen} />
+        <Stack.Screen name="OrderSummary" component={OrderSummaryScreen} />
+        <Stack.Screen name="PartyAndEvents" component={PartyAndEventsScreen} />
+        <Stack.Screen name="Calendar" component={CalendarScreen} />
+        <Stack.Screen name="Budgets" component={BudgetsScreen} />
+        <Stack.Screen name="Structure" component={StructureScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   )

@@ -33,6 +33,8 @@ export default function FuelDetailsScreen() {
   const litersNumber = Number(liters.replace(',', '.')) || 0
   const totalValue = litersNumber * PRICE_PER_LITER
 
+  const canConfirmLiters = Boolean(liters.trim()) || isCompletingTank
+
   const handleGoBack = () => {
     if (showTerms) {
       setShowTerms(false)
@@ -50,7 +52,7 @@ export default function FuelDetailsScreen() {
   }
 
   const handleConfirmLiters = () => {
-    if (!liters && !isCompletingTank) return
+    if (!canConfirmLiters) return
     setShowLitersModal(false)
     setShowTerms(true)
   }
@@ -93,7 +95,8 @@ export default function FuelDetailsScreen() {
       <Text style={styles.headerTitle}>{title}</Text>
 
       <TouchableOpacity onPress={handleClose} style={styles.iconButton}>
-        <Ionicons name="close" size={22} color="#FFFFFF" />
+        {/* X invisível mas clicável */}
+        <Ionicons name="close" size={22} color="transparent" />
       </TouchableOpacity>
     </View>
   )
@@ -267,9 +270,21 @@ export default function FuelDetailsScreen() {
               />
             </View>
 
+            {!isCompletingTank && liters.trim().length === 0 && (
+              <Text style={styles.feedbackText}>
+                Informe a quantidade de litros antes de avançar ou selecione
+                COMPLETAR.
+              </Text>
+            )}
+
             <TouchableOpacity
-              style={[styles.modalPrimaryButton, { marginTop: 24 }]}
-              onPress={handleConfirmLiters}
+              style={[
+                styles.modalPrimaryButton,
+                { marginTop: 24 },
+                !canConfirmLiters && { opacity: 0.4 }
+              ]}
+              onPress={canConfirmLiters ? handleConfirmLiters : undefined}
+              activeOpacity={canConfirmLiters ? 0.7 : 1}
             >
               <Text style={styles.modalPrimaryButtonText}>ABASTECER</Text>
             </TouchableOpacity>
@@ -280,7 +295,6 @@ export default function FuelDetailsScreen() {
               style={styles.modalSecondaryButton}
               onPress={handleCompleteTank}
             >
-              {/* mantém o typo do layout */}
               <Text style={styles.modalSecondaryButtonText}>COMPLETAR</Text>
             </TouchableOpacity>
           </View>
@@ -298,7 +312,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingTop: 50,
+    paddingTop: 60,
     paddingHorizontal: 16,
     paddingBottom: 12,
     justifyContent: 'space-between'
@@ -429,6 +443,13 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 16
   },
+  feedbackText: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    marginTop: 8,
+    textAlign: 'center',
+    opacity: 0.8
+  },
   modalPrimaryButton: {
     backgroundColor: '#FFFFFF',
     borderRadius: 30,
@@ -495,4 +516,3 @@ const styles = StyleSheet.create({
     fontSize: 14
   }
 })
-
