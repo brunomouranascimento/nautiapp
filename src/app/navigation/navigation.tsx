@@ -73,6 +73,7 @@ import SosAuthoritiesScreen from '../screens/PaidAdministration/SOSHelp/Authorit
 import SosMarinaChatScreen from '../screens/PaidAdministration/SOSHelp/Marina'
 import SosShareLocationScreen from '../screens/PaidAdministration/SOSHelp/ShareLocation'
 import SosIncidentScreen from '../screens/PaidAdministration/SOSHelp/Incident'
+import FreeAdministration from '../screens/FreeAdministration/FreeAdministration'
 
 const Stack = createNativeStackNavigator()
 
@@ -188,6 +189,7 @@ export default function Routes() {
           component={SosShareLocationScreen}
         />
         <Stack.Screen name="SosIncident" component={SosIncidentScreen} />
+        <Stack.Screen name="FreeUser" component={FreeAdministration} />
       </Stack.Navigator>
     </NavigationContainer>
   )

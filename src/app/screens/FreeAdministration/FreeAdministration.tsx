@@ -22,7 +22,7 @@ import { useNavigation } from '@react-navigation/native'
 type MovementType = 'SUBIDA' | 'DESCIDA'
 type MovementStep = 1 | 2 | 3 | 4
 
-export default function PaidAdministration() {
+export default function FreeAdministration() {
   const navigation: any = useNavigation()
 
   const [movementModalVisible, setMovementModalVisible] = useState(false)
@@ -183,15 +183,15 @@ export default function PaidAdministration() {
 
           <TouchableOpacity
             style={styles.button}
-            onPress={() => handleNavigate('CondominiumAdministration')}
+            onPress={() => handleNavigate('PaidMarinaAdministration')}
           >
-            <FontAwesome5
-              name="laptop-house"
+            <MaterialCommunityIcons
+              name="anchor"
               size={28}
               color="#fff"
               style={{ marginBottom: 8 }}
             />
-            <Text style={styles.buttonText}>Condomínio</Text>
+            <Text style={styles.buttonText}>Marina</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -209,32 +209,6 @@ export default function PaidAdministration() {
 
           <TouchableOpacity
             style={styles.button}
-            onPress={() => handleNavigate('PaidMarinaAdministration')}
-          >
-            <MaterialCommunityIcons
-              name="anchor"
-              size={28}
-              color="#fff"
-              style={{ marginBottom: 8 }}
-            />
-            <Text style={styles.buttonText}>Marina</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => handleNavigate('NavigationScheduling')}
-          >
-            <FontAwesome5
-              name="location-arrow"
-              size={28}
-              color="#fff"
-              style={{ marginBottom: 8 }}
-            />
-            <Text style={styles.buttonText}>Agendar navegação</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.button}
             onPress={() => handleNavigate('Coupons')}
           >
             <MaterialIcons
@@ -244,73 +218,6 @@ export default function PaidAdministration() {
               style={{ marginBottom: 8 }}
             />
             <Text style={styles.buttonText}>Cupons e descontos</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => handleNavigate('PaidFinancial')}
-          >
-            <FontAwesome5
-              name="chart-line"
-              size={28}
-              color="#fff"
-              style={{ marginBottom: 8 }}
-            />
-            <Text style={styles.buttonText}>Financeiro</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => handleNavigate('CheckIn')}
-          >
-            <MaterialCommunityIcons
-              name="map-marker-check"
-              size={28}
-              color="#fff"
-              style={{ marginBottom: 8 }}
-            />
-            <Text style={styles.buttonText}>Check-in</Text>
-          </TouchableOpacity>
-        </View>
-
-        <Text
-          style={{
-            color: '#fff',
-            fontSize: 18,
-            fontWeight: 'bold',
-            marginTop: 5,
-            marginBottom: 10,
-            textAlign: 'center'
-          }}
-        >
-          Movimentação
-        </Text>
-
-        <View style={styles.grid}>
-          <TouchableOpacity
-            style={styles.buttonMovement}
-            onPress={() => startMovementFlow('DESCIDA')}
-          >
-            <AntDesign
-              name="arrowdown"
-              size={38}
-              color="red"
-              style={{ marginBottom: 8 }}
-            />
-            <Text style={styles.buttonText}>Solicitar descida</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.buttonMovement}
-            onPress={() => startMovementFlow('SUBIDA')}
-          >
-            <AntDesign
-              name="arrowup"
-              size={38}
-              color="green"
-              style={{ marginBottom: 8 }}
-            />
-            <Text style={styles.buttonText}>Solicitar subida</Text>
           </TouchableOpacity>
         </View>
 

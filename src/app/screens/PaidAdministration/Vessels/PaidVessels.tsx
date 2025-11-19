@@ -57,11 +57,12 @@ export default function PaidVessels() {
   const open = (route: string) => navigation.navigate(route)
 
   return (
-    <>
+    <View style={styles.container}>
       {/* Header */}
       <View style={styles.headerTitle}>
         <Ionicons
           name="arrow-back"
+          color="#ffffff"
           size={24}
           onPress={() => navigation.goBack()}
         />
@@ -81,7 +82,7 @@ export default function PaidVessels() {
           </TouchableOpacity>
         ))}
       </View>
-    </>
+    </View>
   )
 }
 
@@ -98,11 +99,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 10,
     marginBottom: 10,
-    marginTop: 50
+    marginTop: 50,
+    color: '#ffffff'
   },
   headerTitleName: {
     fontWeight: 'bold',
-    fontSize: 18
+    fontSize: 18,
+    color: '#ffffff'
   },
   pill: {
     height: 56,
