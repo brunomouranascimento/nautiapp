@@ -283,7 +283,7 @@ export default function FreeAdministration() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#2F3A4C', padding: 16 },
+  container: { flex: 1, backgroundColor: '#2F3A4C', padding: 8 },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -352,17 +352,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    gap: 16,
+    gap: 4,
     marginTop: 10
   },
   button: {
     backgroundColor: '#2B2F66',
     borderRadius: 12,
-    paddingVertical: 20,
+    paddingVertical: 15,
     alignItems: 'center',
     justifyContent: 'center',
-    width: '47%',
-    marginBottom: 16
+    width: '48%',
+    marginBottom: 8
   },
   buttonMovement: {
     backgroundColor: 'transparent',

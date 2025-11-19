@@ -30,6 +30,11 @@ export default function PaidAdministration() {
   const [movementStep, setMovementStep] = useState<MovementStep>(1)
   const timeoutRef = useRef<NodeJS.Timeout | null>(null)
 
+  // Novo: modal de confirmação
+  const [confirmModalVisible, setConfirmModalVisible] = useState(false)
+  const [pendingMovementType, setPendingMovementType] =
+    useState<MovementType | null>(null)
+
   const goToRoleSelection = () => {
     navigation.goBack()
   }
@@ -71,6 +76,20 @@ export default function PaidAdministration() {
     setMovementModalVisible(false)
     setMovementStep(1)
     setMovementType(null)
+  }
+
+  // Novo: abrir modal de confirmação
+  const askConfirmation = (type: MovementType) => {
+    setPendingMovementType(type)
+    setConfirmModalVisible(true)
+  }
+
+  // Novo: confirmar e iniciar fluxo
+  const confirmMovement = () => {
+    setConfirmModalVisible(false)
+    if (pendingMovementType) {
+      startMovementFlow(pendingMovementType)
+    }
   }
 
   useEffect(() => {
@@ -289,10 +308,10 @@ export default function PaidAdministration() {
         <View style={styles.grid}>
           <TouchableOpacity
             style={styles.buttonMovement}
-            onPress={() => startMovementFlow('DESCIDA')}
+            onPress={() => askConfirmation('DESCIDA')}
           >
             <AntDesign
-              name="arrowdown"
+              name="arrow-down"
               size={38}
               color="red"
               style={{ marginBottom: 8 }}
@@ -302,10 +321,10 @@ export default function PaidAdministration() {
 
           <TouchableOpacity
             style={styles.buttonMovement}
-            onPress={() => startMovementFlow('SUBIDA')}
+            onPress={() => askConfirmation('SUBIDA')}
           >
             <AntDesign
-              name="arrowup"
+              name="arrow-up"
               size={38}
               color="green"
               style={{ marginBottom: 8 }}
@@ -329,6 +348,44 @@ export default function PaidAdministration() {
           </TouchableOpacity>
         </View>
       </View>
+
+      {/* MODAL DE CONFIRMAÇÃO DE MOVIMENTAÇÃO */}
+      <Modal
+        visible={confirmModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setConfirmModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.confirmModalContainer}>
+            <Text style={styles.confirmTitle}>
+              Confirmar{' '}
+              {pendingMovementType === 'SUBIDA' ? 'subida' : 'descida'}?
+            </Text>
+
+            <Text style={styles.confirmMessage}>
+              Tem certeza que deseja iniciar o processo? Caso esteja navegando,
+              evite tocar acidentalmente.
+            </Text>
+
+            <View style={styles.confirmButtonsRow}>
+              <TouchableOpacity
+                style={styles.confirmCancelButton}
+                onPress={() => setConfirmModalVisible(false)}
+              >
+                <Text style={styles.confirmCancelText}>CANCELAR</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.confirmOkButton}
+                onPress={confirmMovement}
+              >
+                <Text style={styles.confirmOkText}>CONFIRMAR</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
 
       {/* MODAL FLUXO DE MOVIMENTAÇÃO */}
       <Modal
@@ -376,7 +433,7 @@ export default function PaidAdministration() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#2F3A4C', padding: 16 },
+  container: { flex: 1, backgroundColor: '#2F3A4C', padding: 8 },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -445,17 +502,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    gap: 16,
+    gap: 4,
     marginTop: 10
   },
   button: {
     backgroundColor: '#2B2F66',
     borderRadius: 12,
-    paddingVertical: 20,
+    paddingVertical: 15,
     alignItems: 'center',
     justifyContent: 'center',
-    width: '47%',
-    marginBottom: 16
+    width: '48%',
+    marginBottom: 8
   },
   buttonMovement: {
     backgroundColor: 'transparent',
@@ -526,6 +583,59 @@ const styles = StyleSheet.create({
     color: '#2F3A4C',
     fontSize: 14,
     fontWeight: '700'
+  },
+
+  // Modal confirmação
+  confirmModalContainer: {
+    width: '82%',
+    backgroundColor: '#2F3A4C',
+    borderRadius: 20,
+    paddingHorizontal: 24,
+    paddingVertical: 26
+  },
+  confirmTitle: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: '700',
+    textAlign: 'center',
+    marginBottom: 12
+  },
+  confirmMessage: {
+    color: '#E1E6FF',
+    textAlign: 'center',
+    fontSize: 14,
+    marginBottom: 20,
+    lineHeight: 20
+  },
+  confirmButtonsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 10
+  },
+  confirmCancelButton: {
+    flex: 1,
+    marginRight: 10,
+    backgroundColor: '#444B5E',
+    paddingVertical: 12,
+    borderRadius: 12,
+    alignItems: 'center'
+  },
+  confirmCancelText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600'
+  },
+  confirmOkButton: {
+    flex: 1,
+    marginLeft: 10,
+    backgroundColor: '#FFFFFF',
+    paddingVertical: 12,
+    borderRadius: 12,
+    alignItems: 'center'
+  },
+  confirmOkText: {
+    color: '#2F3A4C',
+    fontWeight: '700',
+    fontSize: 14
   }
 })
-

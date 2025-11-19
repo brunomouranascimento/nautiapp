@@ -155,7 +155,7 @@ export default function OperatorAdministration() {
         <Text style={styles.scanText}>Escanear embarcação</Text>
         <FontAwesome5
           name="qrcode"
-          size={26}
+          size={108}
           color="#C9D3E5"
           style={{ marginTop: 6 }}
         />
@@ -231,7 +231,7 @@ const MenuButton = ({ icon, label, customIconSet }: any) => {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#2F3A4C', padding: 16 },
+  container: { flex: 1, backgroundColor: '#2F3A4C', padding: 8 },
   topActions: {
     marginTop: 40
   },
@@ -244,6 +244,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   scanLink: {
+    marginTop: 35,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -358,17 +359,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    gap: 16,
+    gap: 4,
     marginTop: 10
   },
   button: {
     backgroundColor: '#2B2F66',
     borderRadius: 12,
-    paddingVertical: 20,
+    paddingVertical: 15,
     alignItems: 'center',
     justifyContent: 'center',
-    width: '47%',
-    marginBottom: 16
+    width: '48%',
+    marginBottom: 8
   },
   buttonText: { color: '#fff', fontWeight: '600', textAlign: 'center' }
 })
