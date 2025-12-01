@@ -10,7 +10,6 @@ import {
   ActivityIndicator
 } from 'react-native'
 import {
-  AntDesign,
   Feather,
   FontAwesome5,
   Ionicons,
@@ -297,15 +296,14 @@ export default function PaidAdministration() {
             color: '#fff',
             fontSize: 18,
             fontWeight: 'bold',
-            marginTop: 5,
-            marginBottom: 10,
+            marginTop: 15,
             textAlign: 'center'
           }}
         >
           Movimentação
         </Text>
 
-        <View style={styles.grid}>
+        {/* <View style={styles.grid}>
           <TouchableOpacity
             style={styles.buttonMovement}
             onPress={() => askConfirmation('DESCIDA')}
@@ -331,8 +329,15 @@ export default function PaidAdministration() {
             />
             <Text style={styles.buttonText}>Solicitar subida</Text>
           </TouchableOpacity>
+        </View> */}
+        <View style={{ alignItems: 'center' }}>
+          <TouchableOpacity
+            onPress={() => askConfirmation('DESCIDA')}
+            style={styles.loginButton}
+          >
+            <Text style={styles.loginText}>SOLICITAR DESCIDA</Text>
+          </TouchableOpacity>
         </View>
-
         <View style={{ alignItems: 'center' }}>
           <TouchableOpacity
             onPress={goToSosHelp}
@@ -441,6 +446,17 @@ const styles = StyleSheet.create({
     marginTop: 20
   },
   title: { fontSize: 18, color: '#fff', fontWeight: '600' },
+  loginButton: {
+    backgroundColor: 'white',
+    borderRadius: 25,
+    color: '#fff',
+    paddingVertical: 15,
+    width: '80%',
+    alignItems: 'center',
+    marginTop: 10,
+    marginBottom: 30
+  },
+  loginText: { fontWeight: 'bold', color: 'black' },
   logo: {
     alignSelf: 'center',
     height: 40,
@@ -460,7 +476,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'white',
     textAlign: 'center',
-    fontSize: 16
+    fontSize: 18
   },
   card: {
     backgroundColor: '#3D4B64',
@@ -639,3 +655,4 @@ const styles = StyleSheet.create({
     fontSize: 14
   }
 })
+

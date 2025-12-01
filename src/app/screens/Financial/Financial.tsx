@@ -108,7 +108,7 @@ const Financial = () => {
         ))}
       </View>
 
-      {/* Gráfico de Linhas em card branco */}
+      {/* Gráfico de Linhas em card */}
       <View style={styles.graficoCard}>
         <Text style={styles.graficoTitle}>Movimentações por mês</Text>
         <LineChart
@@ -123,7 +123,7 @@ const Financial = () => {
         />
       </View>
 
-      {/* Gráfico de Pizza em card branco */}
+      {/* Gráfico de Pizza em card */}
       <View style={styles.graficoCard}>
         <Text style={styles.graficoTitle}>Distribuição por categoria</Text>
         <PieChart
@@ -141,15 +141,17 @@ const Financial = () => {
 }
 
 const chartConfig = {
-  backgroundGradientFrom: '#fff',
-  backgroundGradientTo: '#fff',
-  color: (opacity = 1) => `rgba(0, 123, 255, ${opacity})`,
+  backgroundGradientFrom: '#4E5F78',
+  backgroundGradientTo: '#4E5F78',
+  color: () => `rgba(0, 123, 255)`,
   strokeWidth: 2,
-  decimalPlaces: 0
+  decimalPlaces: 0,
+  labelColor: () => '#FFFFFF'
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 16, backgroundColor: '#2C3545' },
+
   headerTitle: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -163,6 +165,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 18
   },
+
   cards: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -178,22 +181,27 @@ const styles = StyleSheet.create({
   },
   cardTitle: { fontSize: 14, color: '#fff', textAlign: 'center' },
   cardValue: { fontSize: 18, fontWeight: 'bold', marginTop: 4, color: '#fff' },
+
   filtros: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
     marginVertical: 16
   },
   filtroBtn: {
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderRadius: 20,
-    backgroundColor: '#3A4258'
+    backgroundColor: '#3A4258',
+    marginBottom: 15,
+    marginRight: 2
   },
   filtroAtivo: { backgroundColor: '#007BFF' },
   filtroText: { color: '#fff', fontWeight: 'bold' },
   filtroTextAtivo: { color: '#fff' },
+
   graficoCard: {
-    backgroundColor: '#fff',
+    backgroundColor: '#4E5F78',
     borderRadius: 16,
     padding: 16,
     marginVertical: 12,
@@ -203,9 +211,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 8,
-    color: '#000'
+    color: '#fff'
   },
-  grafico: { borderRadius: 16 }
+  grafico: { borderRadius: 16, backgroundColor: '#4E5F78' }
 })
 
 export default Financial

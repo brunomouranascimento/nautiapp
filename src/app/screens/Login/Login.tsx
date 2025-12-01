@@ -9,6 +9,7 @@ import {
 } from 'react-native'
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
+import { Video, ResizeMode } from 'expo-av'
 
 export default function LoginScreen() {
   const navigation: any = useNavigation()
@@ -19,15 +20,30 @@ export default function LoginScreen() {
 
   return (
     <View style={styles.container}>
+      <Video
+        source={require('../../assets/login-video-2.mp4')}
+        style={styles.fullscreenVideo}
+        resizeMode={ResizeMode.COVER}
+        isLooping
+        shouldPlay
+        isMuted
+      />
+      <View style={styles.fullscreenOverlay} />
+
       <View style={styles.header}>
         <Image
           source={require('../../assets/N.png')}
           style={styles.logo}
           resizeMode="contain"
         />
+        <Image
+          source={require('../../assets/logoname_high_resolution.png')}
+          style={styles.logoName}
+          resizeMode="contain"
+        />
       </View>
 
-      <View style={styles.curve} />
+      {/* <View style={styles.curve} /> */}
 
       <View style={styles.form}>
         <Text style={styles.loginTitle}>Login</Text>
@@ -80,24 +96,50 @@ export default function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#303A4A' },
-  header: { alignItems: 'center', marginTop: 60, position: 'relative' },
-  logo: { height: 350, width: 350 },
-  closeButton: { position: 'absolute', top: 0, right: 20 },
+  container: { flex: 1, backgroundColor: '#000' },
+  fullscreenVideo: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: 0,
+    height: '70%'
+  },
+  fullscreenOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: 1
+  },
+  header: {
+    alignItems: 'center',
+    marginTop: 60,
+    position: 'relative',
+    overflow: 'hidden',
+    width: '100%',
+    height: 350,
+    zIndex: 2,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center'
+  },
+  logo: { height: 250, width: 250, zIndex: 2, marginTop: -50 },
+  logoName: { height: 100, width: 200, zIndex: 2, marginTop: -100 },
   curve: {
     height: 60,
     backgroundColor: '#4E5F78',
     borderTopLeftRadius: 100,
     borderTopRightRadius: 100,
-    marginTop: 20
+    marginTop: 50
   },
   form: {
+    borderTopLeftRadius: 60,
+    borderTopRightRadius: 60,
     backgroundColor: '#4E5F78',
     flex: 1,
     alignItems: 'center',
-    paddingTop: 10
+    paddingTop: 0,
+    zIndex: 2,
+    position: 'relative',
+    bottom: 0
   },
   loginTitle: {
+    marginTop: 20,
     fontSize: 28,
     color: '#fff',
     fontWeight: 'bold',
