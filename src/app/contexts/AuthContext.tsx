@@ -4,7 +4,7 @@ type AuthSession = Record<string, any> | null
 
 type AuthContextData = {
   session: AuthSession
-  setSession: (session: AuthSession) => void
+  setSession: React.Dispatch<React.SetStateAction<AuthSession>>
   clearSession: () => void
 }
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   View,
   Text,
@@ -14,9 +14,112 @@ import {
   MaterialIcons,
   Feather
 } from '@expo/vector-icons'
-import { useNavigation } from '@react-navigation/native'
+import { useFocusEffect, useNavigation } from '@react-navigation/native'
+import { useAuth } from '../../contexts/AuthContext'
 
 export default function Profile() {
+  const { session, setSession } = useAuth()
+  const user = session?.user
+  const marina = session?.marina
+  const avatarBase64 = user?.avatar || session?.avatar
+  const avatarUri = avatarBase64
+    ? avatarBase64.startsWith('data:image')
+      ? avatarBase64
+      : `data:image/png;base64,${avatarBase64}`
+    : null
+  const formatCpf = (value: string | number | null | undefined) =>
+    String(value || '')
+      .replace(/\D/g, '')
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d{1,2})$/, '$1-$2')
+  const formatDate = (value: string | null | undefined) => {
+    if (!value) {
+      return ''
+    }
+
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(value)) {
+      return value
+    }
+
+    const date = new Date(value)
+
+    if (Number.isNaN(date.getTime())) {
+      return value
+    }
+
+    return date.toLocaleDateString('pt-BR')
+  }
+  const formatPhone = (value: string | number | null | undefined) => {
+    const digits = String(value || '')
+      .replace(/\D/g, '')
+      .slice(0, 11)
+
+    if (!digits) {
+      return ''
+    }
+
+    if (digits.length <= 2) {
+      return `(${digits}`
+    }
+
+    if (digits.length <= 7) {
+      return `(${digits.slice(0, 2)}) ${digits.slice(2)}`
+    }
+
+    if (digits.length <= 10) {
+      return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`
+    }
+
+    return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`
+  }
+  const formatAddress = (addressData: any) => {
+    const address = Array.isArray(addressData) ? addressData[0] : addressData
+
+    if (!address) {
+      return ''
+    }
+
+    const street = (
+      address.street ||
+      address.address ||
+      address.publicPlace ||
+      address.place ||
+      address.addressLine ||
+      ''
+    ).trim()
+    const number = String(address.number || '').trim()
+    const complement = String(address.complement || '').trim()
+    const neighborhood = String(
+      address.neighborhood || address.district || ''
+    ).trim()
+    const city = String(address.city || '').trim()
+    const state = String(address.state || address.uf || '').trim()
+
+    const streetLine = [street, number, complement].filter(Boolean).join(' ')
+    const regionLine = [
+      neighborhood ? `, ${neighborhood}` : '',
+      city || state ? ` - ${[city, state].filter(Boolean).join('/')}` : ''
+    ]
+      .filter(Boolean)
+      .join('')
+
+    return `${streetLine}${regionLine}`.trim()
+  }
+  const formatZipCode = (value: string | number | null | undefined) =>
+    String(value || '')
+      .replace(/\D/g, '')
+      .slice(0, 8)
+      .replace(/(\d{5})(\d)/, '$1-$2')
+  const formatCnpj = (value: string | number | null | undefined) =>
+    String(value || '')
+      .replace(/\D/g, '')
+      .slice(0, 14)
+      .replace(/^(\d{2})(\d)/, '$1.$2')
+      .replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
+      .replace(/\.(\d{3})(\d)/, '.$1/$2')
+      .replace(/(\d{4})(\d)/, '$1-$2')
+
   const [nome, setNome] = useState('João da Silva Xavier')
   const [cpf, setCpf] = useState('123.456.789-10')
   const [nascimento, setNascimento] = useState('')
@@ -35,6 +138,84 @@ export default function Profile() {
 
   const navigation: any = useNavigation()
 
+  useFocusEffect(
+    React.useCallback(() => {
+      let isActive = true
+
+      const loadMarina = async () => {
+        try {
+          const response = await fetch(
+            'https://hml-ntslcl.nautisystem.com/partner/1',
+            {
+              headers: {
+                Accept: 'application/json',
+                'Accept-Language': 'pt-BR,pt;q=0.9',
+                lang: 'pt-BR',
+                locale: 'pt-BR',
+                'x-access-token': session?.authorization || ''
+              }
+            }
+          )
+
+          if (!response.ok) {
+            return
+          }
+
+          const responseText = await response.text()
+          const responseData = responseText ? JSON.parse(responseText) : null
+          const company = responseData?.object?.company
+
+          if (!isActive || !company) {
+            return
+          }
+
+          setSession(currentSession => ({
+            ...(currentSession || {}),
+            marina: company
+          }))
+        } catch {
+          // Mantém os dados atuais se a request falhar.
+        }
+      }
+
+      loadMarina()
+
+      return () => {
+        isActive = false
+      }
+    }, [setSession])
+  )
+
+  useEffect(() => {
+    setNome(
+      user?.name || user?.fullName || user?.username || session?.username || ''
+    )
+    setCpf(formatCpf(user?.registrationPf))
+    setNascimento(
+      formatDate(
+        user?.birthDate || user?.dateBirth || user?.birthday || user?.bornAt
+      )
+    )
+    setTelefone(
+      formatPhone(
+        user?.phones?.[0]?.connection || user?.mobilePhone || user?.cellPhone
+      )
+    )
+    setEmail(user?.email || session?.email || '')
+    setCep(
+      formatZipCode(
+        user?.adresses?.[0]?.address?.zipcode ||
+          user?.adresses?.[0]?.address?.postalCode ||
+          user?.adresses?.[0]?.address?.cep
+      )
+    )
+    setEndereco(formatAddress(user?.adresses?.[0]?.address))
+    setRazaoSocial(marina?.socialReason || '')
+    setNomeFantasia(marina?.fantasy || '')
+    setCnpj(formatCnpj(marina?.registrationPj))
+    setSite(marina?.site || '')
+  }, [session])
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
@@ -50,7 +231,11 @@ export default function Profile() {
 
       <View style={styles.avatarContainer}>
         <Image
-          source={require('../../assets/splash-icon.png')}
+          source={
+            avatarUri
+              ? { uri: avatarUri }
+              : require('../../assets/splash-icon.png')
+          }
           style={styles.avatar}
         />
         <View style={styles.editIcon}>
@@ -138,7 +323,7 @@ export default function Profile() {
       <TextInput
         style={styles.input}
         value={telefone}
-        onChangeText={setTelefone}
+        onChangeText={value => setTelefone(formatPhone(value))}
         placeholder="Telefone"
         placeholderTextColor="#ccc"
       />

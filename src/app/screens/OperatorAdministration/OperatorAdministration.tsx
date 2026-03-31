@@ -13,12 +13,80 @@ import {
   FontAwesome5,
   MaterialCommunityIcons
 } from '@expo/vector-icons'
-import { useNavigation } from '@react-navigation/native'
+import { useFocusEffect, useNavigation } from '@react-navigation/native'
+import { useAuth } from '../../contexts/AuthContext'
 
 export default function OperatorAdministration() {
   const navigation: any = useNavigation()
+  const { session, setSession } = useAuth()
   const [scanVisible, setScanVisible] = React.useState(false)
   const [scanCode, setScanCode] = React.useState('')
+  const userId = session?.id ?? session?.user?.id
+  const registrationId = userId ? String(userId) : '--'
+  const username = session?.user?.username || session?.username || 'Usuário'
+  const avatarBase64 = session?.user?.avatar || session?.avatar
+  const avatarUri = avatarBase64
+    ? avatarBase64.startsWith('data:image')
+      ? avatarBase64
+      : `data:image/png;base64,${avatarBase64}`
+    : null
+  const registrationPf = session?.user?.registrationPf || '123.456.789-10'
+  const formattedRegistrationPf = String(registrationPf)
+    .replace(/\D/g, '')
+    .replace(/(\d{3})(\d)/, '$1.$2')
+    .replace(/(\d{3})(\d)/, '$1.$2')
+    .replace(/(\d{3})(\d{1,2})$/, '$1-$2')
+
+  useFocusEffect(
+    React.useCallback(() => {
+      if (!userId) {
+        return
+      }
+
+      let isActive = true
+
+      const loadUser = async () => {
+        try {
+          const response = await fetch(
+            `https://hml-ntscdu.nautisystem.com/people/user/${userId}`,
+            {
+              headers: {
+                Accept: 'application/json',
+                'Accept-Language': 'pt-BR,pt;q=0.9',
+                lang: 'pt-BR',
+                locale: 'pt-BR',
+                'x-access-token': session?.authorization || ''
+              }
+            }
+          )
+
+          if (!response.ok) {
+            return
+          }
+
+          const responseText = await response.text()
+          const responseData = responseText ? JSON.parse(responseText) : null
+
+          if (!isActive || !responseData) {
+            return
+          }
+
+          setSession(currentSession => ({
+            ...(currentSession || {}),
+            user: responseData.object
+          }))
+        } catch {
+          // Mantém a tela funcional se a carga complementar falhar.
+        }
+      }
+
+      loadUser()
+
+      return () => {
+        isActive = false
+      }
+    }, [userId, setSession])
+  )
 
   const goToRoleSelection = () => {
     navigation.goBack()
@@ -41,7 +109,7 @@ export default function OperatorAdministration() {
     navigation.navigate('VesselScan', {
       id: scanCode || 'XZ-001',
       nome: 'Yamaha XZ700',
-      proprietario: 'Jorge Fernandes',
+      proprietario: username,
       status: 'Ativa'
     })
   }
@@ -71,12 +139,16 @@ export default function OperatorAdministration() {
       <View style={styles.card}>
         <View style={styles.cardHeader}>
           <Image
-            source={require('../../assets/splash-icon.png')}
+            source={
+              avatarUri
+                ? { uri: avatarUri }
+                : require('../../assets/splash-icon.png')
+            }
             style={styles.marinaImage}
           />
           <View>
-            <Text style={styles.marinaName}>Jorge Fernandes</Text>
-            <Text style={styles.marinaCnpj}>Mat. 123456789</Text>
+            <Text style={styles.marinaName}>{username}</Text>
+            <Text style={styles.marinaCnpj}>Mat. {registrationId}</Text>
           </View>
           <TouchableOpacity
             style={styles.editIcon}
@@ -89,7 +161,7 @@ export default function OperatorAdministration() {
         <View style={styles.cardRow}>
           <Feather name="user" color="#fff" size={16} />
           <Text style={styles.label}>CPF</Text>
-          <Text style={styles.value}>123.456.789-10</Text>
+          <Text style={styles.value}>{formattedRegistrationPf}</Text>
         </View>
         <View style={styles.cardRow}>
           <Feather name="calendar" color="#fff" size={16} />
@@ -373,4 +445,3 @@ const styles = StyleSheet.create({
   },
   buttonText: { color: '#fff', fontWeight: '600', textAlign: 'center' }
 })
-
