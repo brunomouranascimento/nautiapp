@@ -6,9 +6,12 @@ import {
   MaterialCommunityIcons
 } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
+import { useAuth } from '../../contexts/AuthContext'
 
 export default function MarinaAdministration() {
   const navigation: any = useNavigation()
+  const { session } = useAuth()
+  const username = session?.username || 'Usuário'
 
   const goToRoleSelection = () => {
     navigation.goBack()
@@ -27,7 +30,7 @@ export default function MarinaAdministration() {
       />
 
       <View style={styles.header}>
-        <Text style={styles.title}>Bem-vindo Roberio</Text>
+        <Text style={styles.title}>Bem-vindo {username}</Text>
       </View>
 
       <View style={styles.card}>
@@ -231,4 +234,3 @@ const styles = StyleSheet.create({
   },
   buttonText: { color: '#fff', fontWeight: '600', textAlign: 'center' }
 })
-

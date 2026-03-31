@@ -1,21 +1,106 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Image
+  Image,
+  Alert,
+  ActivityIndicator
 } from 'react-native'
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
 import { Video, ResizeMode } from 'expo-av'
+import { useAuth } from '../../contexts/AuthContext'
 
 export default function LoginScreen() {
   const navigation: any = useNavigation()
+  const { setSession } = useAuth()
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
+  const trimmedUsername = username.trim()
+  const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedUsername)
+  const isValidPassword = password.trim().length >= 3
+  const isLoginDisabled = !isValidEmail || !isValidPassword || isLoading
 
-  const handleLogin = () => {
-    navigation.navigate('RoleSelection')
+  const handleLogin = async () => {
+    if (!trimmedUsername || !password.trim()) {
+      setErrorMessage('Preencha e-mail e senha.')
+      return
+    }
+
+    if (!isValidEmail) {
+      setErrorMessage('Informe um e-mail valido.')
+      return
+    }
+
+    if (!isValidPassword) {
+      setErrorMessage('A senha deve ter no minimo 3 caracteres.')
+      return
+    }
+
+    setIsLoading(true)
+    setErrorMessage('')
+
+    try {
+      const response: any = await fetch(
+        'https://hml-ntssso.nautisystem.com/signin',
+        {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            'Accept-Language': 'pt-BR,pt;q=0.9',
+            lang: 'pt-BR',
+            locale: 'pt-BR'
+          },
+          body: JSON.stringify({
+            username: username.trim(),
+            password,
+            ip: '1.1.1.1'
+          })
+        }
+      )
+
+      const responseText = await response.text()
+      let responseData: any = null
+
+      if (responseText) {
+        try {
+          responseData = JSON.parse(responseText)
+        } catch {
+          responseData = responseText
+        }
+      }
+
+      if (!response.ok) {
+        const serviceMessage =
+          responseData?.message ||
+          responseData?.error ||
+          'Nao foi possivel fazer login.'
+
+        Alert.alert(serviceMessage)
+        return
+      }
+      if (responseData?.success) {
+        setSession(responseData.object)
+        navigation.navigate('RoleSelection')
+      } else {
+        Alert.alert(
+          'Erro',
+          responseData?.message || 'Nao  aaa foi possivel fazer login.'
+        )
+      }
+    } catch (error) {
+      setErrorMessage('Falha ao conectar com o serviço de login.')
+      Alert.alert('Erro', 'Falha ao conectar com o serviço de login.')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -54,6 +139,16 @@ export default function LoginScreen() {
             placeholder="E-mail"
             placeholderTextColor="#fff"
             style={styles.input}
+            value={username}
+            onChangeText={value => {
+              setUsername(value)
+              if (errorMessage) {
+                setErrorMessage('')
+              }
+            }}
+            autoCapitalize="none"
+            keyboardType="email-address"
+            editable={!isLoading}
           />
         </View>
 
@@ -67,18 +162,49 @@ export default function LoginScreen() {
           <TextInput
             placeholder="Senha"
             placeholderTextColor="#fff"
-            secureTextEntry
+            secureTextEntry={!showPassword}
             style={styles.input}
+            value={password}
+            onChangeText={value => {
+              setPassword(value)
+              if (errorMessage) {
+                setErrorMessage('')
+              }
+            }}
+            editable={!isLoading}
           />
-          <Feather name="eye" size={20} color="#ccc" style={styles.iconRight} />
+          <TouchableOpacity
+            onPress={() => setShowPassword(current => !current)}
+            disabled={isLoading}
+          >
+            <Feather
+              name={showPassword ? 'eye-off' : 'eye'}
+              size={20}
+              color="#ccc"
+              style={styles.iconRight}
+            />
+          </TouchableOpacity>
         </View>
+
+        {!!errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
 
         <TouchableOpacity style={styles.forgotPassword}>
           <Text style={styles.forgotText}>Esqueceu sua senha?</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
-          <Text style={styles.loginText}>LOGIN</Text>
+        <TouchableOpacity
+          onPress={handleLogin}
+          style={[
+            styles.loginButton,
+            isLoginDisabled && styles.loginButtonDisabled
+          ]}
+          disabled={isLoginDisabled}
+        >
+          {isLoading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.loginText}>LOGIN</Text>
+          )}
         </TouchableOpacity>
 
         <View style={styles.divider}>
@@ -159,6 +285,11 @@ const styles = StyleSheet.create({
   input: { flex: 1, color: '#fff', paddingLeft: 10 },
   icon: { marginRight: 5 },
   iconRight: { marginLeft: 5 },
+  errorText: {
+    width: '80%',
+    color: '#FFD6D6',
+    marginTop: 12
+  },
   forgotPassword: { alignSelf: 'flex-end', marginRight: '10%', marginTop: 10 },
   forgotText: { color: '#fff' },
   loginButton: {
@@ -169,6 +300,9 @@ const styles = StyleSheet.create({
     width: '80%',
     alignItems: 'center',
     marginTop: 20
+  },
+  loginButtonDisabled: {
+    opacity: 0.7
   },
   loginText: { fontWeight: 'bold', color: '#fff' },
   divider: {
