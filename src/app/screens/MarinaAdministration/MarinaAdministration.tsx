@@ -5,13 +5,90 @@ import {
   FontAwesome5,
   MaterialCommunityIcons
 } from '@expo/vector-icons'
-import { useNavigation } from '@react-navigation/native'
+import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { useAuth } from '../../contexts/AuthContext'
 
 export default function MarinaAdministration() {
   const navigation: any = useNavigation()
-  const { session } = useAuth()
+  const { session, setSession } = useAuth()
+  const [isLoadingMarina, setIsLoadingMarina] = React.useState(false)
+  const [hasLoadedMarina, setHasLoadedMarina] = React.useState(false)
   const username = session?.username || 'Usuário'
+  const administratorName = session?.username || '--'
+  const marina = session?.marina
+  const showMarinaSkeleton = isLoadingMarina && !marina
+  const marinaName = marina?.fantasy || marina?.socialReason || 'Marina'
+  const marinaDocument = String(marina?.registrationPj || '')
+    .replace(/\D/g, '')
+    .slice(0, 14)
+    .replace(/^(\d{2})(\d)/, '$1.$2')
+    .replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
+    .replace(/\.(\d{3})(\d)/, '.$1/$2')
+    .replace(/(\d{4})(\d)/, '$1-$2')
+
+  useFocusEffect(
+    React.useCallback(() => {
+      if (marina) {
+        setIsLoadingMarina(false)
+        setHasLoadedMarina(true)
+
+        return
+      }
+
+      let isActive = true
+
+      const loadMarina = async () => {
+        setIsLoadingMarina(true)
+
+        try {
+          const response = await fetch(
+            'https://hml-ntslcl.nautisystem.com/partner/1',
+            {
+              headers: {
+                Accept: 'application/json',
+                'Accept-Language': 'pt-BR,pt;q=0.9',
+                lang: 'pt-BR',
+                locale: 'pt-BR',
+                'x-access-token': session?.authorization || ''
+              }
+            }
+          )
+
+          if (!response.ok) {
+            return
+          }
+
+          const responseText = await response.text()
+          const responseData = responseText ? JSON.parse(responseText) : null
+          const company = responseData?.object?.company
+
+          if (!isActive || !company) {
+            return
+          }
+
+          setSession(currentSession => ({
+            ...(currentSession || {}),
+            marina: company
+          }))
+        } catch {
+          // Mantém os dados atuais se a request falhar.
+        } finally {
+          if (!isActive) {
+            return
+          }
+
+          setIsLoadingMarina(false)
+          setHasLoadedMarina(true)
+        }
+      }
+
+      loadMarina()
+
+      return () => {
+        isActive = false
+      }
+    }, [marina, session?.authorization, setSession])
+  )
 
   const goToRoleSelection = () => {
     navigation.goBack()
@@ -39,9 +116,27 @@ export default function MarinaAdministration() {
             source={require('../../assets/splash-icon.png')}
             style={styles.marinaImage}
           />
-          <View>
-            <Text style={styles.marinaName}>Marina do Lago 123</Text>
-            <Text style={styles.marinaCnpj}>01.234.567/0001-10</Text>
+          <View style={styles.cardHeaderContent}>
+            {showMarinaSkeleton ? (
+              <>
+                <View style={[styles.skeletonLine, styles.skeletonTitle]} />
+                <View style={[styles.skeletonLine, styles.skeletonSubtitle]} />
+              </>
+            ) : marina ? (
+              <>
+                <Text style={styles.marinaName}>{marinaName}</Text>
+                <Text style={styles.marinaCnpj}>{marinaDocument || '--'}</Text>
+              </>
+            ) : (
+              <>
+                <Text style={styles.marinaName}>Marina indisponível</Text>
+                <Text style={styles.marinaCnpj}>
+                  {hasLoadedMarina
+                    ? 'Não foi possível carregar os dados.'
+                    : '--'}
+                </Text>
+              </>
+            )}
           </View>
           <TouchableOpacity
             style={styles.editIcon}
@@ -51,16 +146,33 @@ export default function MarinaAdministration() {
           </TouchableOpacity>
         </View>
 
-        <View style={styles.cardRow}>
-          <Feather name="user" color="#fff" size={16} />
-          <Text style={styles.label}>Administrador</Text>
-          <Text style={styles.value}>João da Silva</Text>
-        </View>
-        <View style={styles.cardRow}>
-          <Feather name="calendar" color="#fff" size={16} />
-          <Text style={styles.label}>Nascimento</Text>
-          <Text style={styles.value}>01/02/1985</Text>
-        </View>
+        {showMarinaSkeleton ? (
+          <>
+            <View style={styles.cardRow}>
+              <Feather name="user" color="#fff" size={16} />
+              <Text style={styles.label}>Administrador</Text>
+              <View style={[styles.skeletonLine, styles.skeletonValue]} />
+            </View>
+            <View style={styles.cardRow}>
+              <Feather name="calendar" color="#fff" size={16} />
+              <Text style={styles.label}>Nascimento</Text>
+              <View style={[styles.skeletonLine, styles.skeletonValueSmall]} />
+            </View>
+          </>
+        ) : (
+          <>
+            <View style={styles.cardRow}>
+              <Feather name="user" color="#fff" size={16} />
+              <Text style={styles.label}>Administrador</Text>
+              <Text style={styles.value}>{administratorName}</Text>
+            </View>
+            <View style={styles.cardRow}>
+              <Feather name="calendar" color="#fff" size={16} />
+              <Text style={styles.label}>Nascimento</Text>
+              <Text style={styles.value}>01/02/1985</Text>
+            </View>
+          </>
+        )}
       </View>
 
       <View style={styles.grid}>
@@ -200,6 +312,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 12
   },
+  cardHeaderContent: {
+    flex: 1
+  },
   marinaImage: {
     height: 50,
     width: 50,
@@ -216,6 +331,27 @@ const styles = StyleSheet.create({
   },
   label: { marginLeft: 6, color: '#ccc', fontSize: 14, flex: 1 },
   value: { color: '#fff', fontSize: 14 },
+  skeletonLine: {
+    backgroundColor: '#55627C',
+    borderRadius: 999
+  },
+  skeletonTitle: {
+    height: 16,
+    width: 150,
+    marginBottom: 8
+  },
+  skeletonSubtitle: {
+    height: 12,
+    width: 120
+  },
+  skeletonValue: {
+    height: 14,
+    width: 110
+  },
+  skeletonValueSmall: {
+    height: 14,
+    width: 80
+  },
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',

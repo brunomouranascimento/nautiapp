@@ -19,9 +19,13 @@ import { useAuth } from '../../contexts/AuthContext'
 export default function OperatorAdministration() {
   const navigation: any = useNavigation()
   const { session, setSession } = useAuth()
+  const [isLoadingUser, setIsLoadingUser] = React.useState(false)
+  const [hasLoadedUser, setHasLoadedUser] = React.useState(false)
   const [scanVisible, setScanVisible] = React.useState(false)
   const [scanCode, setScanCode] = React.useState('')
   const userId = session?.id ?? session?.user?.id
+  const user = session?.user
+  const showUserSkeleton = isLoadingUser && !user
   const registrationId = userId ? String(userId) : '--'
   const username = session?.user?.username || session?.username || 'Usuário'
   const avatarBase64 = session?.user?.avatar || session?.avatar
@@ -39,6 +43,13 @@ export default function OperatorAdministration() {
 
   useFocusEffect(
     React.useCallback(() => {
+      if (user) {
+        setIsLoadingUser(false)
+        setHasLoadedUser(true)
+
+        return
+      }
+
       if (!userId) {
         return
       }
@@ -46,6 +57,8 @@ export default function OperatorAdministration() {
       let isActive = true
 
       const loadUser = async () => {
+        setIsLoadingUser(true)
+
         try {
           const response = await fetch(
             `https://hml-ntscdu.nautisystem.com/people/user/${userId}`,
@@ -77,6 +90,13 @@ export default function OperatorAdministration() {
           }))
         } catch {
           // Mantém a tela funcional se a carga complementar falhar.
+        } finally {
+          if (!isActive) {
+            return
+          }
+
+          setIsLoadingUser(false)
+          setHasLoadedUser(true)
         }
       }
 
@@ -85,7 +105,7 @@ export default function OperatorAdministration() {
       return () => {
         isActive = false
       }
-    }, [userId, setSession])
+    }, [user, userId, session?.authorization, setSession])
   )
 
   const goToRoleSelection = () => {
@@ -138,17 +158,39 @@ export default function OperatorAdministration() {
       </View>
       <View style={styles.card}>
         <View style={styles.cardHeader}>
-          <Image
-            source={
-              avatarUri
-                ? { uri: avatarUri }
-                : require('../../assets/splash-icon.png')
-            }
-            style={styles.marinaImage}
-          />
-          <View>
-            <Text style={styles.marinaName}>{username}</Text>
-            <Text style={styles.marinaCnpj}>Mat. {registrationId}</Text>
+          {showUserSkeleton ? (
+            <View style={[styles.marinaImage, styles.skeletonAvatar]} />
+          ) : (
+            <Image
+              source={
+                avatarUri
+                  ? { uri: avatarUri }
+                  : require('../../assets/splash-icon.png')
+              }
+              style={styles.marinaImage}
+            />
+          )}
+          <View style={styles.cardHeaderContent}>
+            {showUserSkeleton ? (
+              <>
+                <View style={[styles.skeletonLine, styles.skeletonTitle]} />
+                <View style={[styles.skeletonLine, styles.skeletonSubtitle]} />
+              </>
+            ) : user ? (
+              <>
+                <Text style={styles.marinaName}>{username}</Text>
+                <Text style={styles.marinaCnpj}>Mat. {registrationId}</Text>
+              </>
+            ) : (
+              <>
+                <Text style={styles.marinaName}>Operador indisponível</Text>
+                <Text style={styles.marinaCnpj}>
+                  {hasLoadedUser
+                    ? 'Não foi possível carregar os dados.'
+                    : '--'}
+                </Text>
+              </>
+            )}
           </View>
           <TouchableOpacity
             style={styles.editIcon}
@@ -158,16 +200,33 @@ export default function OperatorAdministration() {
           </TouchableOpacity>
         </View>
 
-        <View style={styles.cardRow}>
-          <Feather name="user" color="#fff" size={16} />
-          <Text style={styles.label}>CPF</Text>
-          <Text style={styles.value}>{formattedRegistrationPf}</Text>
-        </View>
-        <View style={styles.cardRow}>
-          <Feather name="calendar" color="#fff" size={16} />
-          <Text style={styles.label}>Nascimento</Text>
-          <Text style={styles.value}>01/02/1985</Text>
-        </View>
+        {showUserSkeleton ? (
+          <>
+            <View style={styles.cardRow}>
+              <Feather name="user" color="#fff" size={16} />
+              <Text style={styles.label}>CPF</Text>
+              <View style={[styles.skeletonLine, styles.skeletonValue]} />
+            </View>
+            <View style={styles.cardRow}>
+              <Feather name="calendar" color="#fff" size={16} />
+              <Text style={styles.label}>Nascimento</Text>
+              <View style={[styles.skeletonLine, styles.skeletonValueSmall]} />
+            </View>
+          </>
+        ) : (
+          <>
+            <View style={styles.cardRow}>
+              <Feather name="user" color="#fff" size={16} />
+              <Text style={styles.label}>CPF</Text>
+              <Text style={styles.value}>{formattedRegistrationPf}</Text>
+            </View>
+            <View style={styles.cardRow}>
+              <Feather name="calendar" color="#fff" size={16} />
+              <Text style={styles.label}>Nascimento</Text>
+              <Text style={styles.value}>01/02/1985</Text>
+            </View>
+          </>
+        )}
       </View>
 
       <View style={styles.grid}>
@@ -411,11 +470,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 12
   },
+  cardHeaderContent: {
+    flex: 1
+  },
   marinaImage: {
     height: 50,
     width: 50,
     borderRadius: 25,
     marginRight: 12
+  },
+  skeletonAvatar: {
+    backgroundColor: '#55627C'
   },
   marinaName: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
   marinaCnpj: { color: '#ccc', fontSize: 14 },
@@ -427,6 +492,27 @@ const styles = StyleSheet.create({
   },
   label: { marginLeft: 6, color: '#ccc', fontSize: 14, flex: 1 },
   value: { color: '#fff', fontSize: 14 },
+  skeletonLine: {
+    backgroundColor: '#55627C',
+    borderRadius: 999
+  },
+  skeletonTitle: {
+    height: 16,
+    width: 140,
+    marginBottom: 8
+  },
+  skeletonSubtitle: {
+    height: 12,
+    width: 100
+  },
+  skeletonValue: {
+    height: 14,
+    width: 110
+  },
+  skeletonValueSmall: {
+    height: 14,
+    width: 80
+  },
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',

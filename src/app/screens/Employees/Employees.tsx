@@ -1,4 +1,3 @@
-// Employees.tsx
 import React from 'react'
 import {
   View,
@@ -10,21 +9,87 @@ import {
 } from 'react-native'
 import { Ionicons, MaterialIcons } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
+import { useAuth } from '../../contexts/AuthContext'
 
-const employees: Array<any> = [
-  {
-    id: '1',
-    name: 'Júlio de Castilhos',
-    role: 'Operador',
-    birthDate: '01/02/1985',
-    admissionDate: '02/03/2020',
-    register: '01234567',
-    photo: './../assets/splash-icon.png' // Substitua pela URL correta
+const formatDate = (value: string | null | undefined) => {
+  if (!value) {
+    return '--'
   }
-]
+
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(value)) {
+    return value
+  }
+
+  const isoDateMatch = value.match(/^(\d{4})-(\d{2})-(\d{2})/)
+
+  if (isoDateMatch) {
+    const [, year, month, day] = isoDateMatch
+
+    return `${day}/${month}/${year}`
+  }
+
+  const date = new Date(value)
+
+  if (Number.isNaN(date.getTime())) {
+    return '--'
+  }
+
+  return date.toLocaleDateString('pt-BR')
+}
+
+const formatCpf = (value: string | number | null | undefined) =>
+  String(value || '')
+    .replace(/\D/g, '')
+    .slice(0, 11)
+    .replace(/(\d{3})(\d)/, '$1.$2')
+    .replace(/(\d{3})(\d)/, '$1.$2')
+    .replace(/(\d{3})(\d{1,2})$/, '$1-$2') || '--'
+
+const formatSector = (value: string | null | undefined) => {
+  if (!value) {
+    return '--'
+  }
+
+  return value
+    .split('_')
+    .join(' ')
+    .replace(/\b\w/g, letter => letter.toUpperCase())
+}
 
 export default function Employees() {
   const navigation: any = useNavigation()
+  const { session } = useAuth()
+
+  const employees = React.useMemo(() => {
+    const marinaEmployees = Array.isArray(session?.marina?.employees)
+      ? session?.marina?.employees
+      : []
+
+    return marinaEmployees.map((employee: any) => {
+      const person = employee?.people || {}
+      const rawImage = person?.image
+      const avatarUri = rawImage
+        ? rawImage.startsWith('data:image')
+          ? rawImage
+          : `data:image/png;base64,${rawImage}`
+        : null
+
+      return {
+        id: String(employee?.id || employee?.peopleId || person?.id),
+        peopleId: employee?.peopleId || person?.id,
+        name: person?.fullname || person?.name || 'Funcionário',
+        role: employee?.occupation || '--',
+        employeeType: employee?.employeeType || '--',
+        sector: formatSector(employee?.sector),
+        birthDate: formatDate(person?.birth),
+        admissionDate: formatDate(employee?.admission),
+        register: employee?.credential || '--',
+        cpf: formatCpf(person?.registrationPf),
+        avatarUri,
+        raw: employee
+      }
+    })
+  }, [session?.marina?.employees])
 
   const handlePress = (employee: any) => {
     navigation.navigate('EditEmployee', { employee })
@@ -34,12 +99,18 @@ export default function Employees() {
     <TouchableOpacity style={styles.card} onPress={() => handlePress(item)}>
       <View style={styles.header}>
         <Image
-          source={require('../../assets/splash-icon.png')}
+          source={
+            item.avatarUri
+              ? { uri: item.avatarUri }
+              : require('../../assets/splash-icon.png')
+          }
           style={styles.avatar}
         />
         <View style={styles.nameContainer}>
           <Text style={styles.name}>{item.name}</Text>
-          <Text style={styles.role}>{item.role}</Text>
+          <Text style={styles.role}>
+            {item.role} • {item.sector}
+          </Text>
         </View>
         <MaterialIcons name="chevron-right" size={24} color="#ccc" />
       </View>
@@ -73,6 +144,17 @@ export default function Employees() {
           color="#ccc"
           style={styles.icon}
         />
+        <Text style={styles.label}>Tipo</Text>
+        <Text style={styles.value}>{item.employeeType}</Text>
+      </View>
+
+      <View style={styles.infoRow}>
+        <MaterialIcons
+          name="work"
+          size={18}
+          color="#ccc"
+          style={styles.icon}
+        />
         <Text style={styles.label}>Cargo</Text>
         <Text style={styles.value}>{item.role}</Text>
       </View>
@@ -84,8 +166,19 @@ export default function Employees() {
           color="#ccc"
           style={styles.icon}
         />
-        <Text style={styles.label}>Registro</Text>
+        <Text style={styles.label}>Credencial</Text>
         <Text style={styles.value}>{item.register}</Text>
+      </View>
+
+      <View style={styles.infoRow}>
+        <MaterialIcons
+          name="fingerprint"
+          size={18}
+          color="#ccc"
+          style={styles.icon}
+        />
+        <Text style={styles.label}>CPF</Text>
+        <Text style={styles.value}>{item.cpf}</Text>
       </View>
     </TouchableOpacity>
   )
@@ -106,7 +199,19 @@ export default function Employees() {
         data={employees}
         keyExtractor={item => item.id}
         renderItem={renderItem}
-        contentContainerStyle={{ paddingBottom: 20 }}
+        contentContainerStyle={[
+          styles.listContent,
+          employees.length === 0 && styles.emptyListContent
+        ]}
+        ListEmptyComponent={
+          <View style={styles.emptyState}>
+            <MaterialIcons name="groups" size={32} color="#9FB0C8" />
+            <Text style={styles.emptyTitle}>Nenhum funcionário encontrado</Text>
+            <Text style={styles.emptyDescription}>
+              Os funcionários da marina ainda não estão disponíveis na sessão.
+            </Text>
+          </View>
+        }
       />
     </View>
   )
@@ -131,12 +236,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 18
   },
-  title: {
-    fontSize: 20,
-    color: '#fff',
-    fontWeight: 'bold',
-    marginBottom: 16,
-    alignSelf: 'center'
+  listContent: {
+    paddingBottom: 20
+  },
+  emptyListContent: {
+    flexGrow: 1,
+    justifyContent: 'center'
   },
   card: {
     backgroundColor: '#3D4B64',
@@ -180,7 +285,24 @@ const styles = StyleSheet.create({
   },
   value: {
     color: 'white',
-    fontSize: 14
+    fontSize: 14,
+    maxWidth: '45%',
+    textAlign: 'right'
+  },
+  emptyState: {
+    alignItems: 'center',
+    paddingHorizontal: 24
+  },
+  emptyTitle: {
+    color: '#FFFFFF',
+    fontWeight: '700',
+    fontSize: 18,
+    marginTop: 12
+  },
+  emptyDescription: {
+    color: '#C9D3E5',
+    textAlign: 'center',
+    marginTop: 8,
+    lineHeight: 20
   }
 })
-
