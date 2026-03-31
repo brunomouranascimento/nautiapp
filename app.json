@@ -6,11 +6,12 @@
     "orientation": "portrait",
     "icon": "../nautiapp/src/app/assets/icon.png",
     "userInterfaceStyle": "automatic",
+    "backgroundColor": "#2E3A4D",
     "newArchEnabled": true,
     "splash": {
       "image": "../nautiapp/src/app/assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#2E3A4D"
     },
     "ios": {
       "supportsTablet": true
@@ -18,7 +19,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "../nautiapp/src/app/assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#2E3A4D"
       },
       "edgeToEdgeEnabled": true
     },
@@ -27,4 +28,3 @@
     }
   }
 }
-

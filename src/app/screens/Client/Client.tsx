@@ -8,30 +8,121 @@ import {
   ScrollView,
   Modal
 } from 'react-native'
-import { useNavigation, NavigationProp } from '@react-navigation/native'
+import {
+  useFocusEffect,
+  useNavigation,
+  NavigationProp,
+  useRoute
+} from '@react-navigation/native'
 import {
   FontAwesome5,
   Ionicons,
   MaterialCommunityIcons
 } from '@expo/vector-icons'
+import { useAuth } from '../../contexts/AuthContext'
 
 type RootStackParamList = {
-  ClientProfile: undefined
-  ClientNauticalQualification: undefined
-  ClientEmergencyContact: undefined
-  ClientVessel: undefined
-  ClientMarina: undefined
+  ClientProfile: { clientId?: string | number }
+  ClientNauticalQualification: { clientId?: string | number }
+  ClientEmergencyContact: { clientId?: string | number }
+  ClientVessel: { clientId?: string | number }
+  ClientMarina: { clientId?: string | number }
   ExcluirPerfil: undefined
+}
+
+const getAvatarUri = (value: string | null | undefined) => {
+  if (!value) {
+    return null
+  }
+
+  return value.startsWith('data:image')
+    ? value
+    : `data:image/png;base64,${value}`
 }
 
 export default function Client() {
   const [modalVisible, setModalVisible] = useState(false)
+  const [isLoadingClient, setIsLoadingClient] = React.useState(false)
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
+  const route = useRoute()
+  const { session, setSession } = useAuth()
+  const { client, clientId } = (route.params || {}) as any
+  const clientDetails = session?.clientDetails || {}
+  const cachedClient = clientDetails?.[clientId]
+  const clientData = cachedClient || client?.raw || client || {}
+  const person = clientData?.people || client?.raw?.people || {}
+  const clientName = person?.fullname || client?.name || 'Cliente'
+  const avatarUri = getAvatarUri(person?.image || client?.avatarUri)
+
+  useFocusEffect(
+    React.useCallback(() => {
+      if (!clientId || cachedClient) {
+        setIsLoadingClient(false)
+
+        return
+      }
+
+      let isActive = true
+
+      const loadClient = async () => {
+        setIsLoadingClient(true)
+
+        try {
+          const response = await fetch(
+            `https://hml-ntslcl.nautisystem.com/member/${clientId}`,
+            {
+              headers: {
+                Accept: 'application/json',
+                'Accept-Language': 'pt-BR,pt;q=0.9',
+                lang: 'pt-BR',
+                locale: 'pt-BR',
+                'x-access-token': session?.authorization || ''
+              }
+            }
+          )
+
+          if (!response.ok) {
+            return
+          }
+
+          const responseText = await response.text()
+          const responseData = responseText ? JSON.parse(responseText) : null
+          const detailObject = responseData?.object
+
+          if (!isActive || !detailObject) {
+            return
+          }
+
+          setSession(currentSession => ({
+            ...(currentSession || {}),
+            clientDetails: {
+              ...(currentSession?.clientDetails || {}),
+              [clientId]: detailObject
+            }
+          }))
+        } catch {
+          // Mantém a tela funcional se a request falhar.
+        } finally {
+          if (!isActive) {
+            return
+          }
+
+          setIsLoadingClient(false)
+        }
+      }
+
+      loadClient()
+
+      return () => {
+        isActive = false
+      }
+    }, [cachedClient, clientId, session?.authorization, setSession])
+  )
 
   const handleExcluir = () => {
     setModalVisible(false)
     console.log('Cliente excluído!')
   }
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
 
   type MenuButtonProps = {
     label: string
@@ -44,7 +135,18 @@ export default function Client() {
   const MenuButton = ({ label, icon, screen, danger }: MenuButtonProps) => (
     <TouchableOpacity
       style={[styles.menuButton, danger && styles.dangerButton]}
-      onPress={() => navigation.navigate(screen!)}
+      onPress={() => {
+        if (!screen) {
+          return
+        }
+
+        navigation.navigate(
+          screen as any,
+          {
+            clientId
+          } as never
+        )
+      }}
     >
       <View style={styles.iconLabel}>
         {icon}
@@ -56,31 +158,31 @@ export default function Client() {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
         <Ionicons
           name="arrow-back"
           size={24}
-          color="#1A2A44"
+          color="#FFFFFF"
           onPress={() => navigation.goBack()}
         />
-        <Text style={styles.headerText}>Renato Gonçalves</Text>
-        <Ionicons
-          name="close"
-          size={24}
-          color="#1A2A44"
-          onPress={() => navigation.goBack()}
-        />
+        <Text style={styles.headerText}>{clientName}</Text>
+        <View style={styles.headerSpacer} />
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        {/* Foto */}
-        <Image
-          source={require('../../assets/splash-icon.png')}
-          style={styles.avatar}
-        />
+        {isLoadingClient && !avatarUri ? (
+          <View style={[styles.avatar, styles.skeletonAvatar]} />
+        ) : (
+          <Image
+            source={
+              avatarUri
+                ? { uri: avatarUri }
+                : require('../../assets/splash-icon.png')
+            }
+            style={styles.avatar}
+          />
+        )}
 
-        {/* Botões */}
         <MenuButton
           label="Perfil"
           screen="ClientProfile"
@@ -112,14 +214,7 @@ export default function Client() {
         <MenuButton
           label="Marina"
           screen="ClientMarina"
-          icon={
-            <FontAwesome5
-              name="anchor"
-              size={24}
-              color="#fff"
-              style={{ marginBottom: 8 }}
-            />
-          }
+          icon={<FontAwesome5 name="anchor" size={20} color="#fff" />}
         />
         <TouchableOpacity
           style={styles.deleteButton}
@@ -129,11 +224,10 @@ export default function Client() {
           <Text style={styles.deleteButtonText}>Excluir Perfil</Text>
         </TouchableOpacity>
       </ScrollView>
-      {/* Modal de exclusão */}
+
       <Modal visible={modalVisible} transparent animationType="fade">
         <View style={styles.overlay}>
           <View style={styles.modalBox}>
-            {/* Botão de fechar (X) */}
             <TouchableOpacity
               style={styles.closeButton}
               onPress={() => setModalVisible(false)}
@@ -148,7 +242,6 @@ export default function Client() {
               para o uso deste usuário.
             </Text>
 
-            {/* Botões de ação */}
             <TouchableOpacity
               style={styles.cancelButton}
               onPress={() => setModalVisible(false)}
@@ -181,12 +274,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 50,
     paddingBottom: 10,
-    backgroundColor: '#fff'
+    backgroundColor: '#2E3A4D'
   },
   headerText: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#1A2A44'
+    color: '#FFFFFF',
+    flex: 1,
+    textAlign: 'center'
+  },
+  headerSpacer: {
+    width: 24
   },
   scrollContent: {
     alignItems: 'center',
@@ -196,7 +294,12 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     borderRadius: 60,
-    marginBottom: 30
+    marginBottom: 30,
+    borderWidth: 1,
+    borderColor: '#FFFFFF'
+  },
+  skeletonAvatar: {
+    backgroundColor: '#55627C'
   },
   menuButton: {
     flexDirection: 'row',

@@ -3,25 +3,22 @@ import {
   View,
   Text,
   StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  Modal,
-  Image
+  TextInput
 } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
 
 export default function ClientEmergencyContact() {
   const navigation = useNavigation()
-  const [modalVisible, setModalVisible] = useState(false)
 
-  const Field = ({ label, value }: any) => (
+  const Field = ({ label, value, placeholder }: any) => (
     <View style={styles.fieldContainer}>
       <Text style={styles.label}>{label}</Text>
       <TextInput
         style={styles.input}
         value={value}
         editable={false}
+        placeholder={placeholder}
         placeholderTextColor="#A0AEC0"
       />
     </View>
@@ -29,27 +26,20 @@ export default function ClientEmergencyContact() {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
         <Ionicons
           name="arrow-back"
           size={24}
-          color="#1A2A44"
+          color="#FFFFFF"
           onPress={() => navigation.goBack()}
         />
         <Text style={styles.headerText}>Contato de emergência</Text>
-        <Ionicons
-          name="close"
-          size={24}
-          color="#1A2A44"
-          onPress={() => navigation.goBack()}
-        />
+        <View style={styles.headerSpacer} />
       </View>
 
-      {/* Campos */}
       <View style={styles.content}>
-        <Field label="Nome" value="Não informado" disabled />
-        <Field label="Telefone" value="Não informado" disabled />
+        <Field label="Nome" value="" placeholder="Nome do contato" />
+        <Field label="Telefone" value="" placeholder="Telefone do contato" />
       </View>
     </View>
   )
@@ -67,12 +57,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 50,
     paddingBottom: 10,
-    backgroundColor: '#fff'
+    backgroundColor: '#2E3A4D'
   },
   headerText: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#1A2A44'
+    color: '#FFFFFF',
+    flex: 1,
+    textAlign: 'center'
+  },
+  headerSpacer: {
+    width: 24
   },
   content: {
     flex: 1,
@@ -93,43 +88,5 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     color: '#fff',
     fontSize: 16
-  },
-  button: {
-    backgroundColor: 'transparent',
-    borderColor: '#fff',
-    borderWidth: 1,
-    borderRadius: 30,
-    paddingVertical: 15,
-    alignItems: 'center',
-    marginHorizontal: 20,
-    marginBottom: 30
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold'
-  },
-  modalContainer: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.9)',
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  modalContent: {
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  closeButton: {
-    position: 'absolute',
-    top: 50,
-    right: 20,
-    zIndex: 10
-  },
-  documentImage: {
-    width: '90%',
-    height: '80%'
   }
 })
-

@@ -16,67 +16,55 @@ export default function EmbarcacaoScreen() {
   const [modalVisible, setModalVisible] = useState(false)
   const navigation = useNavigation()
 
+  const Field = ({ label, value, placeholder }: any) => (
+    <View style={styles.field}>
+      <Text style={styles.label}>{label}</Text>
+      <TextInput
+        style={styles.input}
+        editable={false}
+        value={value}
+        placeholder={placeholder}
+        placeholderTextColor="#A0AEC0"
+      />
+    </View>
+  )
+
   return (
     <View style={styles.container}>
-      {/* Header branco */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={22} color="#1C2431" />
+          <Ionicons name="arrow-back" size={22} color="#FFFFFF" />
         </TouchableOpacity>
         <Text style={styles.headerText}>Embarcação</Text>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="close" size={22} color="#1C2431" />
-        </TouchableOpacity>
+        <View style={styles.headerSpacer} />
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        {/* Foto da embarcação */}
         <Image
           source={require('../../assets/splash-icon.png')}
           style={styles.image}
         />
 
-        {/* Campos */}
-        <View style={styles.field}>
-          <Text style={styles.label}>Marca</Text>
-          <TextInput style={styles.input} editable={false} value="Yamaha" />
-        </View>
+        <Field label="Marca" value="" placeholder="Marca" />
+        <Field label="Modelo" value="" placeholder="Modelo" />
+        <Field label="Ano" value="" placeholder="Ano" />
+        <Field label="Registro" value="" placeholder="Registro" />
+        <Field
+          label="Horas de navegação"
+          value=""
+          placeholder="Horas de navegação"
+        />
+        <Field
+          label="Última revisão"
+          value=""
+          placeholder="Última revisão"
+        />
+        <Field
+          label="Última navegação"
+          value=""
+          placeholder="Última navegação"
+        />
 
-        <View style={styles.field}>
-          <Text style={styles.label}>Modelo</Text>
-          <TextInput style={styles.input} editable={false} value="VX 700" />
-        </View>
-
-        <View style={styles.field}>
-          <Text style={styles.label}>Ano</Text>
-          <TextInput style={styles.input} editable={false} value="2010" />
-        </View>
-
-        <View style={styles.field}>
-          <Text style={styles.label}>Registro</Text>
-          <TextInput
-            style={styles.input}
-            editable={false}
-            value="12345678910"
-          />
-        </View>
-
-        <View style={styles.field}>
-          <Text style={styles.label}>Horas de navegação</Text>
-          <TextInput style={styles.input} editable={false} value="200" />
-        </View>
-
-        <View style={styles.field}>
-          <Text style={styles.label}>Última revisão</Text>
-          <TextInput style={styles.input} editable={false} value="02/10/2022" />
-        </View>
-
-        <View style={styles.field}>
-          <Text style={styles.label}>Última navegação</Text>
-          <TextInput style={styles.input} editable={false} value="02/04/2023" />
-        </View>
-
-        {/* Botão Ver Documento */}
         <TouchableOpacity
           style={styles.button}
           onPress={() => setModalVisible(true)}
@@ -117,12 +105,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 50,
     paddingBottom: 10,
-    backgroundColor: '#fff'
+    backgroundColor: '#2E3A4D'
   },
   headerText: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#1A2A44'
+    color: '#FFFFFF',
+    flex: 1,
+    textAlign: 'center'
+  },
+  headerSpacer: {
+    width: 22
   },
   scrollContent: {
     padding: 16,
@@ -180,4 +173,3 @@ const styles = StyleSheet.create({
     height: '80%'
   }
 })
-

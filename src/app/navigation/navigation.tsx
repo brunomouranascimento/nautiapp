@@ -1,4 +1,4 @@
-import { NavigationContainer } from '@react-navigation/native'
+import { DarkTheme, NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 
 import Login from '../screens/Login/Login'
@@ -76,11 +76,25 @@ import SosIncidentScreen from '../screens/PaidAdministration/SOSHelp/Incident'
 import FreeAdministration from '../screens/FreeAdministration/FreeAdministration'
 
 const Stack = createNativeStackNavigator()
+const navigationTheme = {
+  ...DarkTheme,
+  colors: {
+    ...DarkTheme.colors,
+    background: '#2E3A4D',
+    card: '#2E3A4D'
+  }
+}
 
 export default function Routes() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <NavigationContainer theme={navigationTheme}>
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+          contentStyle: { backgroundColor: '#2E3A4D' },
+          animation: 'default'
+        }}
+      >
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="RoleSelection" component={RoleSelection} />
         <Stack.Screen
@@ -194,4 +208,3 @@ export default function Routes() {
     </NavigationContainer>
   )
 }
-

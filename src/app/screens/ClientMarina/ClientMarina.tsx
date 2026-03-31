@@ -14,86 +14,48 @@ import { useNavigation } from '@react-navigation/native'
 export default function MarinaScreen() {
   const navigation = useNavigation()
 
+  const Field = ({ label, value, placeholder }: any) => (
+    <View style={styles.field}>
+      <Text style={styles.label}>{label}</Text>
+      <TextInput
+        style={styles.input}
+        editable={false}
+        value={value}
+        placeholder={placeholder}
+        placeholderTextColor="#A0AEC0"
+      />
+    </View>
+  )
+
   return (
     <View style={styles.container}>
-      {/* Header branco */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={22} color="#1C2431" />
+          <Ionicons name="arrow-back" size={22} color="#FFFFFF" />
         </TouchableOpacity>
         <Text style={styles.headerText}>Marina</Text>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="close" size={22} color="#1C2431" />
-        </TouchableOpacity>
+        <View style={styles.headerSpacer} />
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        {/* Foto da Marina */}
         <Image
           source={require('../../assets/splash-icon.png')}
           style={styles.image}
         />
 
-        {/* Campos */}
-        <View style={styles.field}>
-          <Text style={styles.label}>UF</Text>
-          <TextInput style={styles.input} editable={false} value="RS" />
-        </View>
+        <Field label="UF" value="" placeholder="UF" />
+        <Field label="Cidade" value="" placeholder="Cidade" />
+        <Field label="Marina" value="" placeholder="Nome da marina" />
+        <Field label="Endereço" value="" placeholder="Endereço" />
+        <Field label="Telefone" value="" placeholder="Telefone" />
+        <Field label="Site" value="" placeholder="Site" />
 
-        <View style={styles.field}>
-          <Text style={styles.label}>Cidade</Text>
-          <TextInput
-            style={styles.input}
-            editable={false}
-            value="Porto Alegre"
-          />
-        </View>
-
-        <View style={styles.field}>
-          <Text style={styles.label}>Marina</Text>
-          <TextInput
-            style={styles.input}
-            editable={false}
-            value="Marina do Forte 123"
-          />
-        </View>
-
-        <View style={styles.field}>
-          <Text style={styles.label}>Endereço</Text>
-          <TextInput
-            style={styles.input}
-            editable={false}
-            value="Av. do Forte 281"
-          />
-        </View>
-
-        <View style={styles.field}>
-          <Text style={styles.label}>Telefone</Text>
-          <TextInput
-            style={styles.input}
-            editable={false}
-            value="(51) 3289-4523"
-          />
-        </View>
-
-        <View style={styles.field}>
-          <Text style={styles.label}>Site</Text>
-          <TextInput
-            style={styles.input}
-            editable={false}
-            value="http://www.marinadolago123.com.br"
-          />
-        </View>
-
-        {/* Latitude e Longitude lado a lado */}
         <View style={styles.row}>
-          <View style={[styles.field, { flex: 1, marginRight: 8 }]}>
-            <Text style={styles.label}>Latitude</Text>
-            <TextInput style={styles.input} editable={false} value="30°33'00" />
+          <View style={[styles.rowField, { marginRight: 8 }]}>
+            <Field label="Latitude" value="" placeholder="Latitude" />
           </View>
-          <View style={[styles.field, { flex: 1, marginLeft: 8 }]}>
-            <Text style={styles.label}>Longitude</Text>
-            <TextInput style={styles.input} editable={false} value="30°33'00" />
+          <View style={[styles.rowField, { marginLeft: 8 }]}>
+            <Field label="Longitude" value="" placeholder="Longitude" />
           </View>
         </View>
       </ScrollView>
@@ -104,7 +66,7 @@ export default function MarinaScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1C2431'
+    backgroundColor: '#2E3A4D'
   },
   header: {
     flexDirection: 'row',
@@ -113,12 +75,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 50,
     paddingBottom: 10,
-    backgroundColor: '#fff'
+    backgroundColor: '#2E3A4D'
   },
   headerText: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#1A2A44'
+    color: '#FFFFFF',
+    flex: 1,
+    textAlign: 'center'
+  },
+  headerSpacer: {
+    width: 22
   },
   scrollContent: {
     padding: 16,
@@ -139,10 +106,15 @@ const styles = StyleSheet.create({
     marginBottom: 6
   },
   input: {
-    backgroundColor: '#2D3748',
-    borderRadius: 12,
-    padding: 12,
-    color: '#fff'
+    backgroundColor: '#4A5A72',
+    borderRadius: 25,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    color: '#fff',
+    fontSize: 16
+  },
+  rowField: {
+    flex: 1
   },
   row: {
     flexDirection: 'row',
@@ -150,4 +122,3 @@ const styles = StyleSheet.create({
     width: '100%'
   }
 })
-
