@@ -27,7 +27,7 @@ export default function RoleSelection() {
     },
     {
       name: 'USUÁRIO PAGO',
-      screen: 'PaidUser'
+      screen: 'PaidAdministration'
     },
     {
       name: 'USUÁRIO FREE',
@@ -81,4 +81,3 @@ const styles = StyleSheet.create({
   logoutText: { fontWeight: 'bold', color: '#2F3A4C' },
   buttonText: { color: '#303A4A', textAlign: 'center', fontWeight: 'bold' }
 })
-

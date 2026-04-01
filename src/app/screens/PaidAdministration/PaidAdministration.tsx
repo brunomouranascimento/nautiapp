@@ -16,23 +16,137 @@ import {
   MaterialCommunityIcons,
   MaterialIcons
 } from '@expo/vector-icons'
-import { useNavigation } from '@react-navigation/native'
+import { useFocusEffect, useNavigation } from '@react-navigation/native'
+import { useAuth } from '../../contexts/AuthContext'
 
 type MovementType = 'SUBIDA' | 'DESCIDA'
 type MovementStep = 1 | 2 | 3 | 4
 
 export default function PaidAdministration() {
   const navigation: any = useNavigation()
+  const { session, setSession } = useAuth()
 
   const [movementModalVisible, setMovementModalVisible] = useState(false)
   const [movementType, setMovementType] = useState<MovementType | null>(null)
   const [movementStep, setMovementStep] = useState<MovementStep>(1)
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [isLoadingUser, setIsLoadingUser] = useState(false)
+  const [hasLoadedUser, setHasLoadedUser] = useState(false)
 
   // Novo: modal de confirmação
   const [confirmModalVisible, setConfirmModalVisible] = useState(false)
   const [pendingMovementType, setPendingMovementType] =
     useState<MovementType | null>(null)
+  const userId = session?.id ?? session?.user?.id
+  const user = session?.user
+  const baseUser = user || session
+  const showUserSkeleton = isLoadingUser && !user
+  const userName = session?.user?.username || session?.username || 'Usuário'
+  const registrationId = userId ? String(userId) : '--'
+  const registrationPf = baseUser?.registrationPf || baseUser?.cpf || '--'
+  const avatarUri = session?.user?.avatar || session?.avatar
+  const formattedRegistrationPf =
+    String(registrationPf || '')
+      .replace(/\D/g, '')
+      .slice(0, 11)
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d{1,2})$/, '$1-$2') || '--'
+  const formatDate = (value: string | null | undefined) => {
+    if (!value) {
+      return '--'
+    }
+
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(value)) {
+      return value
+    }
+
+    const isoDateMatch = value.match(/^(\d{4})-(\d{2})-(\d{2})/)
+
+    if (isoDateMatch) {
+      const [, year, month, day] = isoDateMatch
+
+      return `${day}/${month}/${year}`
+    }
+
+    const date = new Date(value)
+
+    if (Number.isNaN(date.getTime())) {
+      return '--'
+    }
+
+    return date.toLocaleDateString('pt-BR')
+  }
+  const birthDate = formatDate(
+    user?.birthDate || user?.dateBirth || user?.birthday || user?.bornAt
+  )
+
+  useFocusEffect(
+    React.useCallback(() => {
+      if (user) {
+        setIsLoadingUser(false)
+        setHasLoadedUser(true)
+
+        return
+      }
+
+      if (!userId) {
+        return
+      }
+
+      let isActive = true
+
+      const loadUser = async () => {
+        setIsLoadingUser(true)
+
+        try {
+          const response = await fetch(
+            `https://hml-ntscdu.nautisystem.com/people/user/${userId}`,
+            {
+              headers: {
+                Accept: 'application/json',
+                'Accept-Language': 'pt-BR,pt;q=0.9',
+                lang: 'pt-BR',
+                locale: 'pt-BR',
+                'x-access-token': session?.authorization || ''
+              }
+            }
+          )
+
+          if (!response.ok) {
+            return
+          }
+
+          const responseText = await response.text()
+          const responseData = responseText ? JSON.parse(responseText) : null
+
+          if (!isActive || !responseData?.object) {
+            return
+          }
+
+          setSession(currentSession => ({
+            ...(currentSession || {}),
+            user: responseData.object
+          }))
+        } catch {
+          // Mantém a tela funcional se a carga complementar falhar.
+        } finally {
+          if (!isActive) {
+            return
+          }
+
+          setIsLoadingUser(false)
+          setHasLoadedUser(true)
+        }
+      }
+
+      loadUser()
+
+      return () => {
+        isActive = false
+      }
+    }, [user, userId, session?.authorization, setSession])
+  )
 
   const goToRoleSelection = () => {
     navigation.goBack()
@@ -43,6 +157,10 @@ export default function PaidAdministration() {
 
   const handleNavigate = (menu: string) => {
     navigation.navigate(menu)
+  }
+
+  const openPaidUser = () => {
+    navigation.navigate('PaidUser')
   }
 
   const clearFlowTimeout = () => {
@@ -157,32 +275,92 @@ export default function PaidAdministration() {
 
         <View style={styles.card}>
           <View style={styles.cardHeader}>
-            <Image
-              source={require('../../assets/splash-icon.png')}
-              style={styles.marinaImage}
-            />
+            {showUserSkeleton ? (
+              <View style={[styles.marinaImage, styles.skeletonAvatar]} />
+            ) : (
+              <Image
+                source={
+                  avatarUri
+                    ? { uri: avatarUri }
+                    : require('../../assets/splash-icon.png')
+                }
+                style={styles.marinaImage}
+              />
+            )}
             <View>
-              <Text style={styles.marinaName}>Renato Augusto</Text>
-              <Text style={styles.marinaCnpj}>Mat. 123456789</Text>
+              {showUserSkeleton ? (
+                <>
+                  <View style={[styles.skeletonLine, styles.skeletonTitle]} />
+                  <View
+                    style={[styles.skeletonLine, styles.skeletonSubtitle]}
+                  />
+                </>
+              ) : user || session ? (
+                <>
+                  <Text style={styles.marinaName}>{userName}</Text>
+                  <Text style={styles.marinaCnpj}>Mat. {registrationId}</Text>
+                </>
+              ) : (
+                <>
+                  <Text style={styles.marinaName}>Usuário indisponível</Text>
+                  <Text style={styles.marinaCnpj}>
+                    {hasLoadedUser
+                      ? 'Não foi possível carregar os dados.'
+                      : '--'}
+                  </Text>
+                </>
+              )}
             </View>
             <TouchableOpacity
               style={styles.editIcon}
-              onPress={() => handleNavigate('EditClient')}
+              onPress={openPaidUser}
             >
               <Feather name="edit-2" size={16} color="#fff" />
             </TouchableOpacity>
           </View>
 
-          <View style={styles.cardRow}>
-            <Feather name="user" color="#fff" size={16} />
-            <Text style={styles.label}>CPF</Text>
-            <Text style={styles.value}>123.456.789-10</Text>
-          </View>
-          <View style={styles.cardRow}>
-            <Feather name="calendar" color="#fff" size={16} />
-            <Text style={styles.label}>Nascimento</Text>
-            <Text style={styles.value}>01/02/1985</Text>
-          </View>
+          {showUserSkeleton ? (
+            <>
+              <View style={styles.cardRow}>
+                <Feather name="user" color="#fff" size={16} />
+                <Text style={styles.label}>CPF</Text>
+                <View style={[styles.skeletonLine, styles.skeletonValue]} />
+              </View>
+              <View style={styles.cardRow}>
+                <Feather name="calendar" color="#fff" size={16} />
+                <Text style={styles.label}>Nascimento</Text>
+                <View
+                  style={[styles.skeletonLine, styles.skeletonValueSmall]}
+                />
+              </View>
+            </>
+          ) : user || session ? (
+            <>
+              <View style={styles.cardRow}>
+                <Feather name="user" color="#fff" size={16} />
+                <Text style={styles.label}>CPF</Text>
+                <Text style={styles.value}>{formattedRegistrationPf}</Text>
+              </View>
+              <View style={styles.cardRow}>
+                <Feather name="calendar" color="#fff" size={16} />
+                <Text style={styles.label}>Nascimento</Text>
+                <Text style={styles.value}>{birthDate}</Text>
+              </View>
+            </>
+          ) : (
+            <>
+              <View style={styles.cardRow}>
+                <Feather name="user" color="#fff" size={16} />
+                <Text style={styles.label}>CPF</Text>
+                <Text style={styles.value}>--</Text>
+              </View>
+              <View style={styles.cardRow}>
+                <Feather name="calendar" color="#fff" size={16} />
+                <Text style={styles.label}>Nascimento</Text>
+                <Text style={styles.value}>--</Text>
+              </View>
+            </>
+          )}
         </View>
 
         <View style={styles.grid}>
@@ -504,6 +682,30 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     marginRight: 12
   },
+  skeletonAvatar: {
+    backgroundColor: '#5A6883'
+  },
+  skeletonLine: {
+    backgroundColor: '#5A6883',
+    borderRadius: 6
+  },
+  skeletonTitle: {
+    height: 16,
+    width: 140,
+    marginBottom: 8
+  },
+  skeletonSubtitle: {
+    height: 14,
+    width: 100
+  },
+  skeletonValue: {
+    height: 14,
+    width: 110
+  },
+  skeletonValueSmall: {
+    height: 14,
+    width: 80
+  },
   marinaName: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
   marinaCnpj: { color: '#ccc', fontSize: 14 },
   editIcon: { marginLeft: 'auto' },
@@ -655,4 +857,3 @@ const styles = StyleSheet.create({
     fontSize: 14
   }
 })
-

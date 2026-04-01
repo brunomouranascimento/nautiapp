@@ -9,6 +9,7 @@ import Employees from '../screens/Employees/Employees'
 import Employee from '../screens/Employee/Employee'
 import Clients from '../screens/Clients/Clients'
 import Client from '../screens/Client/Client'
+import PaidUser from '../screens/PaidUser/PaidUser'
 import ClientProfile from '../screens/ClientProfile/ClientProfile'
 import ClientNauticalQualification from '../screens/ClientNauticalQualification/ClientNauticalQualification'
 import ClientEmergencyContact from '../screens/ClientEmergencyContact/ClientEmergencyContact'
@@ -120,6 +121,8 @@ export default function Routes() {
         <Stack.Screen name="EditEmployee" component={Employee} />
         <Stack.Screen name="Clients" component={Clients} />
         <Stack.Screen name="EditClient" component={Client} />
+        <Stack.Screen name="PaidAdministration" component={PaidAdministration} />
+        <Stack.Screen name="PaidUser" component={PaidUser} />
         <Stack.Screen name="ClientProfile" component={ClientProfile} />
         <Stack.Screen
           name="ClientNauticalQualification"
@@ -134,7 +137,6 @@ export default function Routes() {
         <Stack.Screen name="Trips" component={Trips} />
         <Stack.Screen name="Financial" component={Financial} />
         <Stack.Screen name="Support" component={Support} />
-        <Stack.Screen name="PaidUser" component={PaidAdministration} />
         <Stack.Screen name="PaidVessels" component={PaidVessels} />
         <Stack.Screen name="PaidVessel" component={PaidVessel} />
         <Stack.Screen name="PaidRevisions" component={PaidRevisions} />
